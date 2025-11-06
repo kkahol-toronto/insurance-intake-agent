@@ -149,6 +149,9 @@ The production build will be in the `dist` directory.
 - Searchable by claim number, patient name, city, or status
 - Filterable by status (All, Accepted, Pending, Denied)
 - Sortable columns
+- Real patient names (not generic placeholders)
+- Fully bilingual status badges (English/French)
+- Translation fallback system for robust i18n support
 - Pagination support
 
 ## Data Sources
@@ -160,9 +163,20 @@ The production build will be in the `dist` directory.
 ## Development Notes
 
 - Port: 3030 (configured in `vite.config.js`)
-- All pages support bilingual switching
+- All pages support bilingual switching with real-time translation updates
 - Color scheme follows SunLife brand guidelines
 - Responsive design for mobile and desktop
+- Translation system includes fallback logic for robust language switching
+- Status badges automatically update when language changes
+- Patient names use realistic data instead of generic placeholders
+
+## Recent Updates
+
+- ✅ Fixed status translation issue in claims table - status badges now properly translate between English and French
+- ✅ Replaced generic patient names with realistic patient names
+- ✅ Enhanced translation system with fallback logic for robust language switching
+- ✅ Improved component re-rendering on language changes
+- ✅ Added direct resource bundle lookup as fallback for translations
 
 ## Future Enhancements
 
@@ -171,6 +185,7 @@ The production build will be in the `dist` directory.
 - Advanced filtering and analytics
 - User management system
 - Export functionality for reports
+- Additional language support
 
 ## License
 

@@ -124,6 +124,22 @@ export const generateClaimsData = () => {
   const cities = ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Ottawa', 'Edmonton', 'Winnipeg', 'Quebec City', 'Hamilton', 'Kitchener']
   const statuses = ['accepted', 'pending', 'denied']
   
+  // List of real patient names for generating claims
+  const patientNames = [
+    'JAMES WILSON', 'MARY BROWN', 'ROBERT TAYLOR', 'PATRICIA DAVIS', 'MICHAEL MILLER',
+    'JENNIFER MOORE', 'WILLIAM THOMPSON', 'LINDA MARTINEZ', 'RICHARD WHITE', 'BARBARA HARRIS',
+    'JOSEPH LEWIS', 'ELIZABETH CLARK', 'THOMAS ROBINSON', 'SUSAN WALKER', 'CHARLES YOUNG',
+    'JESSICA KING', 'CHRISTOPHER SCOTT', 'SARAH GREEN', 'DANIEL ADAMS', 'KAREN BAKER',
+    'MATTHEW NELSON', 'NANCY HALL', 'ANTHONY ALLEN', 'BETTY WRIGHT', 'MARK LOPEZ',
+    'MARGARET HILL', 'DONALD SCOTT', 'DOROTHY GREEN', 'STEVEN ADAMS', 'LISA BAKER',
+    'PAUL NELSON', 'KAREN HALL', 'ANDREW ALLEN', 'HELEN WRIGHT', 'KENNETH LOPEZ',
+    'SANDRA HILL', 'JOSHUA KING', 'DONNA YOUNG', 'KEVIN SCOTT', 'CAROL GREEN',
+    'BRIAN ADAMS', 'RUTH BAKER', 'GEORGE NELSON', 'SHARON HALL', 'EDWARD ALLEN',
+    'MICHELLE WRIGHT', 'RONALD LOPEZ', 'LAURA HILL', 'TIMOTHY KING', 'AMY YOUNG',
+    'JASON SCOTT', 'ANGELA GREEN', 'RYAN ADAMS', 'MELISSA BAKER', 'ERIC NELSON',
+    'STEPHANIE HALL', 'JACOB ALLEN', 'DEBORAH WRIGHT', 'GARY LOPEZ', 'RACHEL HILL'
+  ]
+  
   // Generate more claims for better visualization
   for (let i = 0; i < 50; i++) {
     const city = cities[Math.floor(Math.random() * cities.length)]
@@ -133,7 +149,7 @@ export const generateClaimsData = () => {
     const mockClaim = {
       id: `CLM-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 9)}`,
       claimNumber: `SLF-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
-      patientName: `Patient ${i + 1}`,
+      patientName: patientNames[i % patientNames.length],
       memberId: `M${Math.floor(Math.random() * 1000000)}`,
       city: city,
       province: 'ON',

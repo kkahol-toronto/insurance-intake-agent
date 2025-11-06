@@ -1,13 +1,26 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import './ClaimsTable.css'
 
 function ClaimsTable({ claims }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [searchTerm, setSearchTerm] = useState('')
   const [sortField, setSortField] = useState('submittedDate')
   const [sortDirection, setSortDirection] = useState('desc')
   const [filterStatus, setFilterStatus] = useState('all')
+  const [language, setLanguage] = useState(i18n.language)
+  
+  // Listen to language changes to force re-render
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      setLanguage(lng)
+    }
+    // Subscribe to language changes
+    i18n.on('languageChanged', handleLanguageChange)
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange)
+    }
+  }, [i18n])
 
   const filteredAndSortedClaims = useMemo(() => {
     let filtered = claims.filter(claim => {
@@ -44,7 +57,7 @@ function ClaimsTable({ claims }) {
     })
 
     return filtered
-  }, [claims, searchTerm, sortField, sortDirection, filterStatus])
+  }, [claims, searchTerm, sortField, sortDirection, filterStatus, language])
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -55,11 +68,15 @@ function ClaimsTable({ claims }) {
     }
   }
 
+  // Function to get status badge - ensure it uses current language
   const getStatusBadge = (status) => {
     const statusClass = `status-badge status-${status}`
+    // Get translation with explicit language dependency
+    const statusKey = `dashboard.status.${status}`
+    const statusText = t(statusKey)
     return (
       <span className={statusClass}>
-        {t(`dashboard.status.${status}`)}
+        {statusText}
       </span>
     )
   }
@@ -131,17 +148,46 @@ function ClaimsTable({ claims }) {
                 </td>
               </tr>
             ) : (
-              filteredAndSortedClaims.map((claim) => (
-                <tr key={claim.id}>
-                  <td>{claim.claimNumber}</td>
-                  <td>{claim.patientName}</td>
-                  <td>{claim.memberId}</td>
-                  <td>{claim.city}</td>
-                  <td>{getStatusBadge(claim.status)}</td>
-                  <td>${claim.amount.toLocaleString()} {claim.currency}</td>
-                  <td>{new Date(claim.submittedDate).toLocaleDateString()}</td>
-                </tr>
-              ))
+              filteredAndSortedClaims.map((claim) => {
+                // Inline status badge to ensure it updates with language changes
+                const statusClass = `status-badge status-${claim.status}`
+                // Get translation - use direct resource bundle lookup as fallback
+                const statusKey = `dashboard.status.${claim.status}`
+                let statusText = t(statusKey)
+                
+                // If translation returns the key itself, use direct lookup
+                if (statusText === statusKey || statusText.includes('DASHBOARD.STATUS') || statusText.includes('dashboard.status')) {
+                  // Direct access to translations as fallback
+                  try {
+                    const translations = i18n.getResourceBundle(i18n.language, 'translation')
+                    statusText = translations?.dashboard?.status?.[claim.status] || 
+                                  (i18n.language === 'fr' 
+                                    ? (claim.status === 'accepted' ? 'Accepté' : claim.status === 'pending' ? 'En Attente' : claim.status === 'denied' ? 'Refusé' : claim.status)
+                                    : (claim.status === 'accepted' ? 'Accepted' : claim.status === 'pending' ? 'Pending' : claim.status === 'denied' ? 'Denied' : claim.status))
+                  } catch (e) {
+                    // Final fallback to hardcoded translations
+                    statusText = i18n.language === 'fr' 
+                      ? (claim.status === 'accepted' ? 'Accepté' : claim.status === 'pending' ? 'En Attente' : claim.status === 'denied' ? 'Refusé' : claim.status)
+                      : (claim.status === 'accepted' ? 'Accepted' : claim.status === 'pending' ? 'Pending' : claim.status === 'denied' ? 'Denied' : claim.status)
+                  }
+                }
+                
+                return (
+                  <tr key={`${claim.id}-${language}`}>
+                    <td>{claim.claimNumber}</td>
+                    <td>{claim.patientName}</td>
+                    <td>{claim.memberId}</td>
+                    <td>{claim.city}</td>
+                    <td>
+                      <span className={statusClass}>
+                        {statusText}
+                      </span>
+                    </td>
+                    <td>${claim.amount.toLocaleString()} {claim.currency}</td>
+                    <td>{new Date(claim.submittedDate).toLocaleDateString()}</td>
+                  </tr>
+                )
+              })
             )}
           </tbody>
         </table>
