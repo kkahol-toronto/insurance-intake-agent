@@ -1,6 +1,88 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Component, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import './ClaimsTable.css'
+
+// Lazy load simulator to prevent blocking app load
+const ClaimsSimulator = lazy(() => import('./simulator/ClaimsSimulator'))
+
+// Error Boundary for simulator
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error }
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Simulator Error:', error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ 
+          padding: '40px', 
+          color: '#E6EAF2', 
+          textAlign: 'center',
+          background: '#151A21',
+          borderRadius: '8px',
+          margin: '20px',
+          minHeight: '400px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <h3 style={{ color: '#dc3545', marginBottom: '16px' }}>Error loading simulator</h3>
+          <p style={{ marginBottom: '16px', wordBreak: 'break-word', maxWidth: '600px' }}>
+            {this.state.error?.message || 'Unknown error'}
+          </p>
+          <p style={{ fontSize: '12px', color: '#666', marginBottom: '16px' }}>
+            {this.state.error?.stack?.split('\n')[0] || ''}
+          </p>
+          <button
+            onClick={() => {
+              this.setState({ hasError: false, error: null })
+            }}
+            style={{
+              padding: '10px 20px',
+              background: '#ECAB23',
+              color: '#0B0F14',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              marginRight: '10px'
+            }}
+          >
+            Try Again
+          </button>
+          <button
+            onClick={() => {
+              window.location.reload()
+            }}
+            style={{
+              padding: '10px 20px',
+              background: '#003946',
+              color: '#E6EAF2',
+              border: '1px solid #ECAB23',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: '600'
+            }}
+          >
+            Reload Page
+          </button>
+        </div>
+      )
+    }
+
+    return this.props.children
+  }
+}
 
 function ClaimsTable({ claims }) {
   const { t, i18n } = useTranslation()
@@ -9,6 +91,17 @@ function ClaimsTable({ claims }) {
   const [sortDirection, setSortDirection] = useState('desc')
   const [filterStatus, setFilterStatus] = useState('all')
   const [language, setLanguage] = useState(i18n.language)
+  const [selectedClaim, setSelectedClaim] = useState(null)
+  
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (selectedClaim) {
+      document.body.classList.add('modal-open')
+      return () => {
+        document.body.classList.remove('modal-open')
+      }
+    }
+  }, [selectedClaim])
   
   // Listen to language changes to force re-render
   useEffect(() => {
@@ -173,7 +266,14 @@ function ClaimsTable({ claims }) {
                 }
                 
                 return (
-                  <tr key={`${claim.id}-${language}`}>
+                  <tr 
+                    key={`${claim.id}-${language}`}
+                    onClick={() => {
+                      console.log('Claim clicked:', claim);
+                      setSelectedClaim(claim);
+                    }}
+                    className="claim-row-clickable"
+                  >
                     <td>{claim.claimNumber}</td>
                     <td>{claim.patientName}</td>
                     <td>{claim.memberId}</td>
@@ -200,6 +300,71 @@ function ClaimsTable({ claims }) {
             .replace('{{total}}', claims.length)}
         </span>
       </div>
+
+      {/* Simulator Modal */}
+      {selectedClaim && (
+        <div 
+          className="simulator-modal" 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              console.log('Modal backdrop clicked');
+              setSelectedClaim(null);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setSelectedClaim(null);
+            }
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="simulator-title"
+        >
+          <div 
+            className="simulator-modal-content" 
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <div className="simulator-modal-header">
+              <h2 id="simulator-title">Claims Process Simulator</h2>
+              <p>Claim: {selectedClaim.claimNumber} - {selectedClaim.patientName}</p>
+              <button 
+                className="simulator-close-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Close button clicked');
+                  setSelectedClaim(null);
+                }}
+                aria-label="Close simulator"
+                type="button"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="simulator-modal-body">
+              <ErrorBoundary>
+                {selectedClaim && (
+                  <Suspense fallback={
+                    <div style={{ 
+                      padding: '40px', 
+                      color: '#E6EAF2', 
+                      textAlign: 'center',
+                      background: '#151A21',
+                      borderRadius: '8px',
+                      margin: '20px'
+                    }}>
+                      <p>Loading simulator for claim: {selectedClaim.claimNumber}...</p>
+                    </div>
+                  }>
+                    <ClaimsSimulator key={selectedClaim.id} />
+                  </Suspense>
+                )}
+              </ErrorBoundary>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

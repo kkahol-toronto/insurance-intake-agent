@@ -1,0 +1,33 @@
+{
+  "nodes": [
+    {"id":"start","label":"Start","status":"idle","durationMs":500},
+    {"id":"ingestion","label":"Claim Ingestion","status":"idle","durationMs":1200,"notes":["Claim Crawler Agent (Fax, Mail)","Claim Email Reader Agent"]},
+    {"id":"formEnhancement","label":"Claim Form Enhancement","status":"idle","durationMs":1000,"notes":["Claim Splitting Agent","Image Enhancement Agent"]},
+    {"id":"classification","label":"Classification","status":"idle","durationMs":1000,"notes":["Claim Document Classification","Claim Prioritization"]},
+    {"id":"contentValidation","label":"Claim Content Validation","status":"idle","durationMs":1400,"notes":["Content Extraction Agent","Claim Content Validation"]},
+    {"id":"providerNotification","label":"Provider Notification (NIGO path)","status":"idle","durationMs":1000,"notes":["Letter creation","Trigger notification"]},
+    {"id":"dataEnrichment","label":"Data Enrichment","status":"idle","durationMs":1200,"notes":["Integrate: CHESS, SPECTER, PEGA","Enrich missing info"]},
+    {"id":"eClaim","label":"Electronic Claim","status":"idle","durationMs":400},
+    {"id":"eClaimValidation","label":"Electronic Claim Validation","status":"idle","durationMs":900,"notes":["EDI Validation","Portal Validation"]},
+    {"id":"gapAssessment","label":"Gap Assessment","status":"idle","durationMs":900,"notes":["Document Evaluation","Match Attributes Across Database"]},
+    {"id":"codeConversion","label":"Code Conversion","status":"idle","durationMs":900,"notes":["Extract Medical Entities","Manage Medical Coding"]},
+    {"id":"dataEntryChess","label":"Claim Data Entry","status":"idle","durationMs":800,"notes":["Data Entry to CHESS"]},
+    {"id":"chess","label":"CHESS","status":"idle","durationMs":400}
+  ],
+  "edges": [
+    {"id":"e1","source":"start","target":"ingestion"},
+    {"id":"e2","source":"ingestion","target":"formEnhancement"},
+    {"id":"e3","source":"formEnhancement","target":"classification"},
+    {"id":"e4","source":"classification","target":"contentValidation"},
+    {"id":"e5","source":"contentValidation","target":"providerNotification","condition":"NIGO"},
+    {"id":"e6","source":"providerNotification","target":"contentValidation"},
+    {"id":"e7","source":"contentValidation","target":"dataEnrichment","condition":"IGO"},
+    {"id":"e8","source":"dataEnrichment","target":"eClaim"},
+    {"id":"e9","source":"eClaim","target":"eClaimValidation"},
+    {"id":"e10","source":"eClaimValidation","target":"gapAssessment"},
+    {"id":"e11","source":"gapAssessment","target":"codeConversion"},
+    {"id":"e12","source":"codeConversion","target":"dataEntryChess"},
+    {"id":"e13","source":"dataEntryChess","target":"chess"}
+  ]
+}
+

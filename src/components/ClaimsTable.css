@@ -145,3 +145,124 @@
   color: #666;
   font-size: 14px;
 }
+
+.claim-row-clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.claim-row-clickable:hover {
+  background-color: #f0f8ff !important;
+}
+
+/* Simulator Modal */
+.simulator-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+  overflow: auto;
+  overscroll-behavior: contain;
+  /* Ensure modal doesn't prevent scrolling or interaction */
+  pointer-events: auto;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+.simulator-modal-content {
+  width: 95vw;
+  height: 95vh;
+  background: #0B0F14;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.simulator-modal-header {
+  padding: 20px 24px;
+  background: #151A21;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.simulator-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #E6EAF2;
+}
+
+.simulator-modal-header p {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(230, 234, 242, 0.7);
+}
+
+.simulator-close-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #E6EAF2;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.simulator-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ECAB23;
+}
+
+.simulator-modal-body {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  min-height: 0; /* Important for flex child */
+}
+
+.simulator-modal-body .claims-simulator {
+  width: 100%;
+  height: 100%;
+  min-height: 800px;
+  overflow: hidden;
+}
+
+.simulator-modal-body .claims-simulator .react-flow {
+  width: 100%;
+  height: 100%;
+}
+
+.simulator-modal-body .claims-simulator .react-flow__viewport {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
