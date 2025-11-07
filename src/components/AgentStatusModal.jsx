@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import './AgentStatusModal.css'
 
 const STEP_DELAY = 1200
+const EXTENDED_DELAY = 4000
 
 function AgentStatusModal({ type, onClose }) {
   const { t } = useTranslation()
@@ -39,8 +40,12 @@ function AgentStatusModal({ type, onClose }) {
   useEffect(() => {
     setCurrentStep(0)
     const timers = []
+    let accumulatedDelay = 0
     for (let i = 1; i < steps.length; i += 1) {
-      timers.push(setTimeout(() => setCurrentStep(i), STEP_DELAY * i))
+      const previousText = steps[i - 1].toLowerCase()
+      const delay = previousText.includes('pulling') ? EXTENDED_DELAY : STEP_DELAY
+      accumulatedDelay += delay
+      timers.push(setTimeout(() => setCurrentStep(i), accumulatedDelay))
     }
     return () => {
       timers.forEach(clearTimeout)
