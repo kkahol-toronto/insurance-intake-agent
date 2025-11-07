@@ -7,7 +7,6 @@ const STEP_DELAY = 1200
 function AgentStatusModal({ type, onClose }) {
   const { t } = useTranslation()
   const [currentStep, setCurrentStep] = useState(0)
-  const [isLooping, setIsLooping] = useState(false)
 
   const steps = useMemo(() => {
     const key = type === 'pega' ? 'pegaSteps' : 'chessSteps'
@@ -39,30 +38,12 @@ function AgentStatusModal({ type, onClose }) {
 
   useEffect(() => {
     setCurrentStep(0)
-    setIsLooping(false)
     const timers = []
     for (let i = 1; i < steps.length; i += 1) {
       timers.push(setTimeout(() => setCurrentStep(i), STEP_DELAY * i))
     }
-    timers.push(
-      setTimeout(() => {
-        setIsLooping(true)
-        let index = 0
-        const loopTimer = setInterval(() => {
-          index = (index + 1) % steps.length
-          setCurrentStep(index)
-        }, STEP_DELAY)
-        timers.push({ loopTimer, isInterval: true })
-      }, STEP_DELAY * steps.length)
-    )
     return () => {
-      timers.forEach((timer) => {
-        if (typeof timer === 'number') {
-          clearTimeout(timer)
-        } else if (timer?.isInterval) {
-          clearInterval(timer.loopTimer)
-        }
-      })
+      timers.forEach(clearTimeout)
     }
   }, [steps])
 
@@ -78,7 +59,7 @@ function AgentStatusModal({ type, onClose }) {
         </button>
         <h2>{title}</h2>
         <div className="agent-modal-step-container">
-          <div key={currentStep} className={`agent-step-card ${isLooping ? 'agent-step-loop' : ''}`}>
+          <div key={currentStep} className="agent-step-card">
             {steps[currentStep]}
           </div>
         </div>
