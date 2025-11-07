@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    { "id": "start", "label": "Start", "status": "idle", "durationMs": 400 },
+    { "id": "stage1", "label": "Stage 1 – Data Extraction", "status": "idle", "durationMs": 1200, "notes": ["Extract data from image", "Parse provider, service codes, totals"] },
+    { "id": "stage2", "label": "Stage 2 – Claim Identification", "status": "idle", "durationMs": 1000, "notes": ["Use extracted claim or member ID", "Search existing claim in CHESS"] },
+    { "id": "stage3", "label": "Stage 3 – Claim Found?", "status": "idle", "durationMs": 900, "notes": ["Yes → continue validation", "No → check policy number"] },
+    { "id": "stage4", "label": "Stage 4 – Policy Check", "status": "idle", "durationMs": 900, "notes": ["If policy 025907 → route to Pega AAM queue", "Otherwise create or update CHESS claim"] },
+    { "id": "stage5", "label": "Stage 5 – Identify Pend Type", "status": "idle", "durationMs": 1000, "notes": ["Additional documentation", "Multiple provider addresses", "Missing provider information", "Policy validation", "Unspecified service"] },
+    { "id": "stage6", "label": "Stage 6 – Provider Verification", "status": "idle", "durationMs": 900, "notes": ["Lookup provider in Spectre registry"] },
+    { "id": "stage7", "label": "Stage 7 – Address & Document Validation", "status": "idle", "durationMs": 900, "notes": ["Match address from image", "Check knowledge articles", "Verify document presence"] },
+    { "id": "stage8", "label": "Stage 8 – Information Found?", "status": "idle", "durationMs": 800, "notes": ["Yes → update CHESS", "No → create Pega inquiry for outreach"] },
+    { "id": "stage9", "label": "Stage 9 – Document Review", "status": "idle", "durationMs": 900, "notes": ["Check CHESS notes for related claims"] },
+    { "id": "stage10", "label": "Stage 10 – Related Note Found?", "status": "idle", "durationMs": 900, "notes": ["Yes → resolve pend in CHESS", "No → deny or reject claim"] },
+    { "id": "stage11", "label": "Stage 11 – Translation & Extraction", "status": "idle", "durationMs": 1000, "notes": ["Translate French documentation", "Extract service type and code"] },
+    { "id": "stage12", "label": "Stage 12 – Policy Validation Branch", "status": "idle", "durationMs": 1000, "notes": ["Check CDCP/Government policies", "Refer knowledge articles", "Extract policy criteria"] },
+    { "id": "stage13", "label": "Stage 13 – Letter Generation", "status": "idle", "durationMs": 800, "notes": ["Create HEMSTER letter for missing info or denial"] },
+    { "id": "stage14", "label": "Stage 14 – Update CHESS", "status": "idle", "durationMs": 800, "notes": ["Write final status and pend resolution back to CHESS"] },
+    { "id": "stage15", "label": "Stage 15 – Outcomes", "status": "idle", "durationMs": 600, "notes": ["Paid – all checks validated", "Denied/Rejected – missing or invalid", "Pending – awaiting docs or manual review"] }
+  ],
+  "edges": [
+    { "id": "c1", "source": "start", "target": "stage1" },
+    { "id": "c2", "source": "stage1", "target": "stage2" },
+    { "id": "c3", "source": "stage2", "target": "stage3" },
+    { "id": "c4", "source": "stage3", "target": "stage4" },
+    { "id": "c5", "source": "stage4", "target": "stage5" },
+    { "id": "c6", "source": "stage5", "target": "stage6" },
+    { "id": "c7", "source": "stage6", "target": "stage7" },
+    { "id": "c8", "source": "stage7", "target": "stage8" },
+    { "id": "c9", "source": "stage8", "target": "stage9" },
+    { "id": "c10", "source": "stage9", "target": "stage10" },
+    { "id": "c11", "source": "stage10", "target": "stage11" },
+    { "id": "c12", "source": "stage11", "target": "stage12" },
+    { "id": "c13", "source": "stage12", "target": "stage13" },
+    { "id": "c14", "source": "stage13", "target": "stage14" },
+    { "id": "c15", "source": "stage14", "target": "stage15" }
+  ]
+}
+

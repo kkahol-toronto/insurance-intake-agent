@@ -1,11 +1,17 @@
 import { create } from 'zustand';
 import { FlowNode, FlowEdge, NodeStatus, BranchPolicy, LogEvent } from '../types/flow';
-import flowDataJson from '../data/flowData.json';
+import defaultFlowJson from '../data/flowData.json';
+import chessFlowJson from '../data/chessAugmentationFlow.json';
 
-// Type assertion for imported JSON
-const flowData = flowDataJson as { nodes: FlowNode[]; edges: FlowEdge[] };
+type FlowKey = 'default' | 'chess';
+
+const flowDefinitions: Record<FlowKey, { nodes: FlowNode[]; edges: FlowEdge[] }> = {
+  default: defaultFlowJson as { nodes: FlowNode[]; edges: FlowEdge[] },
+  chess: chessFlowJson as { nodes: FlowNode[]; edges: FlowEdge[] }
+};
 
 interface SimulatorState {
+  currentFlowKey: FlowKey;
   // Flow data
   nodes: FlowNode[];
   edges: FlowEdge[];
@@ -102,20 +108,23 @@ interface SimulatorState {
   setShowCodeConversionPopup: (show: boolean) => void;
   setClaimDataEntryMessages: (messages: string[]) => void;
   setCurrentClaimDataEntryMessageIndex: (index: number) => void;
+  loadFlow: (flowKey: FlowKey) => void;
 }
 
 const STORAGE_KEY = 'claims-simulator-positions';
 
-const loadSavedPositions = (): Record<string, { x: number; y: number }> => {
+const getStorageKey = (flowKey: FlowKey) => `${STORAGE_KEY}:${flowKey}`;
+
+const loadSavedPositions = (flowKey: FlowKey): Record<string, { x: number; y: number }> => {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(getStorageKey(flowKey));
     return saved ? JSON.parse(saved) : {};
   } catch {
     return {};
   }
 };
 
-const savePositions = (nodes: FlowNode[]) => {
+const savePositions = (flowKey: FlowKey, nodes: FlowNode[]) => {
   try {
     const positions: Record<string, { x: number; y: number }> = {};
     nodes.forEach(node => {
@@ -123,22 +132,32 @@ const savePositions = (nodes: FlowNode[]) => {
         positions[node.id] = node.position;
       }
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
+    localStorage.setItem(getStorageKey(flowKey), JSON.stringify(positions));
   } catch (error) {
     console.error('Failed to save positions:', error);
   }
 };
 
-const initialNodes: FlowNode[] = flowData.nodes.map(node => ({
-  ...node,
-  status: 'idle' as NodeStatus,
-  position: loadSavedPositions()[node.id] || undefined
-}));
+const createFlowState = (flowKey: FlowKey): { nodes: FlowNode[]; edges: FlowEdge[] } => {
+  const flow = flowDefinitions[flowKey];
+  const savedPositions = loadSavedPositions(flowKey);
+  const nodes = flow.nodes.map(node => ({
+    ...node,
+    status: 'idle' as NodeStatus,
+    position: savedPositions[node.id] || undefined
+  }));
+  const edges = flow.edges as FlowEdge[];
+  return { nodes, edges };
+};
+
+const initialFlowKey: FlowKey = 'default';
+const initialFlowState = createFlowState(initialFlowKey);
 
 export const useSimulatorStore = create<SimulatorState>((set, get) => ({
+  currentFlowKey: initialFlowKey,
   // Initial state
-  nodes: initialNodes,
-  edges: flowData.edges as FlowEdge[],
+  nodes: initialFlowState.nodes,
+  edges: initialFlowState.edges,
   isPlaying: false,
   isPaused: false,
   currentNodeId: null,
@@ -173,8 +192,9 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
 
   // Actions
   setNodes: (nodes) => {
+    const { currentFlowKey } = get();
     set({ nodes });
-    savePositions(nodes);
+    savePositions(currentFlowKey, nodes);
   },
   
   setEdges: (edges) => set({ edges }),
@@ -266,15 +286,48 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
   setCurrentClaimDataEntryMessageIndex: (index) => set({ currentClaimDataEntryMessageIndex: index }),
 
   reset: () => {
-    const savedPositions = loadSavedPositions();
-    const resetNodes = flowData.nodes.map(node => ({
-      ...node,
-      status: 'idle' as NodeStatus,
-      position: savedPositions[node.id] || undefined
-    }));
-    
+    const { currentFlowKey } = get();
+    const { nodes, edges } = createFlowState(currentFlowKey);
     set({
-      nodes: resetNodes,
+      nodes,
+      edges,
+      isPlaying: false,
+      isPaused: false,
+      currentNodeId: null,
+      activeEdgeId: null,
+      elapsedTime: 0,
+      startTime: null,
+      nigoCount: 0,
+      eventLog: [],
+      ingestionMessages: [],
+      currentIngestionMessageIndex: -1,
+      showExtractionLink: false,
+      formEnhancementMessages: [],
+      currentFormEnhancementMessageIndex: -1,
+      classificationMessages: [],
+      currentClassificationMessageIndex: -1,
+      contentValidationMessages: [],
+      currentContentValidationMessageIndex: -1,
+      dataEnrichmentMessages: [],
+      currentDataEnrichmentMessageIndex: -1,
+      eClaimValidationMessages: [],
+      currentEClaimValidationMessageIndex: -1,
+      gapAssessmentMessages: [],
+      currentGapAssessmentMessageIndex: -1,
+      codeConversionMessages: [],
+      currentCodeConversionMessageIndex: -1,
+      showCodeConversionPopup: false,
+      claimDataEntryMessages: [],
+      currentClaimDataEntryMessageIndex: -1
+    });
+  },
+  
+  loadFlow: (flowKey: FlowKey) => {
+    const flowState = createFlowState(flowKey);
+    set({
+      currentFlowKey: flowKey,
+      nodes: flowState.nodes,
+      edges: flowState.edges,
       isPlaying: false,
       isPaused: false,
       currentNodeId: null,

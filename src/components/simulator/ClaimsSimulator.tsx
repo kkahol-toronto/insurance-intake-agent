@@ -44,6 +44,7 @@ interface ClaimsSimulatorProps {
   claim?: {
     claimNumber: string;
     patientName: string;
+    integrationType?: string;
   };
 }
 
@@ -70,7 +71,23 @@ function ClaimsSimulatorInner({ claim }: ClaimsSimulatorProps) {
     setIsPlaying,
     setIsPaused,
     setElapsedTime,
+    loadFlow,
+    currentFlowKey,
   } = useSimulatorStore();
+  const integrationFlowKey = claim?.integrationType === 'CHESS' ? 'chess' : 'default';
+
+  useEffect(() => {
+    if (integrationFlowKey !== currentFlowKey) {
+      loadFlow(integrationFlowKey);
+      setTimeout(() => {
+        try {
+          fitView({ padding: 0.2 });
+        } catch (e) {
+          console.warn('fitView error:', e);
+        }
+      }, 600);
+    }
+  }, [integrationFlowKey, currentFlowKey, loadFlow, fitView]);
   
   const [showExtractionViewer, setShowExtractionViewer] = useState(false);
   
