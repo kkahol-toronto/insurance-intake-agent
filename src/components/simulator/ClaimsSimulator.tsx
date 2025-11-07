@@ -79,6 +79,12 @@ function ClaimsSimulatorInner({ claim }: ClaimsSimulatorProps) {
   const { fitView } = useReactFlow();
 
   const integrationFlowKey = claim?.integrationType === 'CHESS' ? 'chess' : 'default';
+
+  useEffect(() => {
+    if (integrationFlowKey !== currentFlowKey) {
+      loadFlow(integrationFlowKey);
+    }
+  }, [integrationFlowKey, currentFlowKey, loadFlow]);
   
   // Listen for extraction viewer open event
   useEffect(() => {
@@ -338,7 +344,7 @@ function ClaimsSimulatorInner({ claim }: ClaimsSimulatorProps) {
         }
       }, 500);
     }
-  }, []); // Run once on mount
+  }, [currentFlowKey]); // Re-run when flow changes
 
   const handleAutoLayout = useCallback(() => {
     const layouted = applyLayout(nodes, edges);
