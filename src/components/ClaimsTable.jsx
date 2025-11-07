@@ -116,12 +116,18 @@ function ClaimsTable({ claims }) {
   }, [i18n])
 
   const filteredAndSortedClaims = useMemo(() => {
+    const search = searchTerm.toLowerCase()
+
     let filtered = claims.filter(claim => {
+      const integrationKey = claim.integrationType || 'Pega'
+      const integrationLabel = t(`dashboard.integrationLabels.${integrationKey}`, integrationKey).toLowerCase()
       const matchesSearch = 
-        claim.claimNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        claim.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        claim.memberId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        claim.city.toLowerCase().includes(searchTerm.toLowerCase())
+        claim.claimNumber.toLowerCase().includes(search) ||
+        claim.patientName.toLowerCase().includes(search) ||
+        claim.memberId.toLowerCase().includes(search) ||
+        claim.city.toLowerCase().includes(search) ||
+        integrationKey.toLowerCase().includes(search) ||
+        integrationLabel.includes(search)
       
       const matchesStatus = filterStatus === 'all' || claim.status === filterStatus
       
@@ -137,7 +143,10 @@ function ClaimsTable({ claims }) {
         bValue = new Date(bValue || 0)
       }
       
-      if (typeof aValue === 'string') {
+      if (sortField === 'integrationType') {
+        aValue = (a.integrationType || 'Pega').toLowerCase()
+        bValue = (b.integrationType || 'Pega').toLowerCase()
+      } else if (typeof aValue === 'string') {
         aValue = aValue.toLowerCase()
         bValue = bValue.toLowerCase()
       }
@@ -170,6 +179,17 @@ function ClaimsTable({ claims }) {
     return (
       <span className={statusClass}>
         {statusText}
+      </span>
+    )
+  }
+
+  const renderIntegrationBadge = (integrationType) => {
+    const key = integrationType || 'Pega'
+    const label = t(`dashboard.integrationLabels.${key}`, key)
+    const badgeClass = `integration-badge integration-${key.toLowerCase()}`
+    return (
+      <span className={badgeClass}>
+        {label}
       </span>
     )
   }
@@ -223,6 +243,10 @@ function ClaimsTable({ claims }) {
                 {t('dashboard.status')}
                 {sortField === 'status' && (sortDirection === 'asc' ? ' ↑' : ' ↓')}
               </th>
+              <th onClick={() => handleSort('integrationType')}>
+                {t('dashboard.agentColumn')}
+                {sortField === 'integrationType' && (sortDirection === 'asc' ? ' ↑' : ' ↓')}
+              </th>
               <th onClick={() => handleSort('amount')}>
                 {t('dashboard.amount')}
                 {sortField === 'amount' && (sortDirection === 'asc' ? ' ↑' : ' ↓')}
@@ -236,7 +260,7 @@ function ClaimsTable({ claims }) {
           <tbody>
             {filteredAndSortedClaims.length === 0 ? (
               <tr>
-                <td colSpan="7" className="no-results">
+                <td colSpan="8" className="no-results">
                   {t('dashboard.noResults')}
                 </td>
               </tr>
@@ -283,6 +307,7 @@ function ClaimsTable({ claims }) {
                         {statusText}
                       </span>
                     </td>
+                    <td>{renderIntegrationBadge(claim.integrationType)}</td>
                     <td>${claim.amount.toLocaleString()} {claim.currency}</td>
                     <td>{new Date(claim.submittedDate).toLocaleDateString()}</td>
                   </tr>

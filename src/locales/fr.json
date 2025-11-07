@@ -26,6 +26,7 @@
     "acceptedClaims": "Réclamations Acceptées",
     "pendingClaims": "Réclamations en Attente",
     "deniedClaims": "Réclamations Refusées",
+    "agentColumn": "Agent",
     "geographicalDistribution": "Distribution Géographique",
     "lastMonthData": "Données du mois dernier",
     "claimsList": "Liste des Réclamations",
@@ -71,6 +72,10 @@
     "downloadGraph": "Télécharger le graphique en PNG",
     "heatmapLegend": "Légende de la Carte Thermique",
     "heatmapExplanation": "Les couleurs des provinces indiquent la densité des réclamations. La taille du cercle représente le total des réclamations. Survolez les villes pour voir les détails.",
+    "integrationLabels": {
+      "Pega": "Augmentation Pega",
+      "CHESS": "Augmentation CHESS"
+    },
     "agentModal": {
       "pegaTitle": "Activité de l'Agent Pega",
       "chessTitle": "Statut de l'Agent CHESS",

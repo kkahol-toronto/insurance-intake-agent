@@ -26,6 +26,7 @@
     "acceptedClaims": "Accepted Claims",
     "pendingClaims": "Pending Claims",
     "deniedClaims": "Denied Claims",
+    "agentColumn": "Agent",
     "geographicalDistribution": "Geographical Distribution",
     "lastMonthData": "Data for last month",
     "claimsList": "Claims List",
@@ -71,6 +72,10 @@
     "downloadGraph": "Download graph as PNG",
     "heatmapLegend": "Heatmap Legend",
     "heatmapExplanation": "Province colors indicate claim density. Circle size represents total claims. Hover over cities for detailed breakdown.",
+    "integrationLabels": {
+      "Pega": "Pega Augmentation",
+      "CHESS": "CHESS Augmentation"
+    },
     "agentModal": {
       "pegaTitle": "Pega Agent Activity",
       "chessTitle": "CHESS Agent Status",

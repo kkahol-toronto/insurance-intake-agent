@@ -116,6 +116,27 @@
   text-transform: uppercase;
 }
 
+.integration-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: rgba(0, 229, 255, 0.08);
+  color: #00bcd4;
+  text-transform: uppercase;
+}
+
+.integration-badge.integration-chess {
+  background-color: rgba(76, 110, 245, 0.12);
+  color: #4c6ef5;
+}
+
+.integration-badge.integration-pega {
+  background-color: rgba(236, 171, 35, 0.15);
+  color: #d78b05;
+}
+
 .status-accepted {
   background-color: rgba(40, 167, 69, 0.1);
   color: #28a745;

@@ -198,6 +198,7 @@ const generateMockClaim = (baseData, variations) => {
     processedDate: status === 'accepted' ? new Date(Date.parse(date) + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : null,
     dentist: baseData.section_1_to_be_completed_by_dentist?.signatures?.office_verification_or_claimant_signature_name || 'N/A',
     procedureCount: baseData.section_1_to_be_completed_by_dentist?.services?.line_items?.length || 0,
+    integrationType: variations.integrationType || 'Pega',
     rawData: baseData
   }
 }
@@ -207,9 +208,9 @@ export const generateClaimsData = () => {
   const claims = []
   
   // Add claims from sample data (based on actual data from JSON files)
-  claims.push(generateMockClaim(sample1Data, { city: 'Toronto', status: 'accepted', date: '2024-11-15' }))
-  claims.push(generateMockClaim(sample2Data, { city: 'Toronto', status: 'pending', date: '2024-11-20' }))
-  claims.push(generateMockClaim(sample3Data, { city: 'Kitchener', status: 'accepted', date: '2024-11-25' }))
+  claims.push(generateMockClaim(sample1Data, { city: 'Toronto', status: 'accepted', date: '2024-11-15', integrationType: 'Pega' }))
+  claims.push(generateMockClaim(sample2Data, { city: 'Toronto', status: 'pending', date: '2024-11-20', integrationType: 'Pega' }))
+  claims.push(generateMockClaim(sample3Data, { city: 'Kitchener', status: 'accepted', date: '2024-11-25', integrationType: 'Pega' }))
   claims.push({
     id: 'CLM-ROBIN-NOAH-20251107',
     claimNumber: 'SLF-129835',
@@ -224,7 +225,59 @@ export const generateClaimsData = () => {
     processedDate: null,
     dentist: 'George Miller',
     procedureCount: 1,
+    integrationType: 'CHESS',
     rawData: externalScenario1Claim
+  })
+  claims.push({
+    id: 'CLM-EMMA-LAMBERT-20251102',
+    claimNumber: 'SLF-782351',
+    patientName: 'EMMA LAMBERT',
+    memberId: '7423186',
+    city: 'Montreal',
+    province: 'QC',
+    status: 'accepted',
+    amount: 420,
+    currency: 'CAD',
+    submittedDate: '2025-11-02',
+    processedDate: '2025-11-04',
+    dentist: 'Dr. Laurent Dubois',
+    procedureCount: 2,
+    integrationType: 'CHESS',
+    rawData: null
+  })
+  claims.push({
+    id: 'CLM-JULIEN-ROY-20251030',
+    claimNumber: 'SLF-903412',
+    patientName: 'JULIEN ROY',
+    memberId: '9034120',
+    city: 'Quebec City',
+    province: 'QC',
+    status: 'pending',
+    amount: 310,
+    currency: 'CAD',
+    submittedDate: '2025-10-30',
+    processedDate: null,
+    dentist: 'Dr. Isabelle Fortier',
+    procedureCount: 1,
+    integrationType: 'CHESS',
+    rawData: null
+  })
+  claims.push({
+    id: 'CLM-CAMILLE-GAGNON-20251105',
+    claimNumber: 'SLF-667204',
+    patientName: 'CAMILLE GAGNON',
+    memberId: '6672043',
+    city: 'Laval',
+    province: 'QC',
+    status: 'accepted',
+    amount: 485,
+    currency: 'CAD',
+    submittedDate: '2025-11-05',
+    processedDate: '2025-11-06',
+    dentist: 'Dr. Pierre Bouchard',
+    procedureCount: 2,
+    integrationType: 'CHESS',
+    rawData: null
   })
   
   // Generate additional mock claims for various scenarios
@@ -253,6 +306,7 @@ export const generateClaimsData = () => {
     const status = statuses[Math.floor(Math.random() * statuses.length)]
     const date = new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     
+    const integrationType = Math.random() < 0.25 ? 'CHESS' : 'Pega'
     const mockClaim = {
       id: `CLM-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 9)}`,
       claimNumber: `SLF-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
@@ -267,6 +321,7 @@ export const generateClaimsData = () => {
       processedDate: status === 'accepted' ? new Date(Date.parse(date) + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : null,
       dentist: `Dr. ${Math.random().toString(36).substr(2, 8)}`,
       procedureCount: Math.floor(Math.random() * 5) + 1,
+      integrationType,
       rawData: null
     }
     claims.push(mockClaim)
