@@ -84,6 +84,97 @@ const sample3Data = {
   }
 }
 
+const externalScenario1Claim = {
+  ClaimantInformation: {
+    ClaimantName: 'Robin Noah',
+    Relationship: '4',
+    PolicyNumber: '129835',
+    CertificateOrMemberID: '7354648',
+    SpouseCoverage: 'No',
+    COBClaim: 'Yes',
+    AlreadyProcessedUnderAnotherPlan: 'Yes'
+  },
+  ClaimDetails: {
+    Expense: {
+      ProviderName: 'George Miller',
+      FacilityId: 'F325373292',
+      ServiceDate: '2025-10-25',
+      TypeOfService: 'Autres frais',
+      ClaimAmount: 550.0,
+      COB: 'Y',
+      COBAmount: 300.0,
+      InitialVisit: 'N',
+      ImageAttached: 'Y'
+    }
+  },
+  ProviderInformation: {
+    FirstName: 'George',
+    LastName: 'Miller',
+    LicenceNumber: '',
+    PhoneNumber: '',
+    FacilityName: '',
+    Address: {
+      Line1: '',
+      Line2: '',
+      City: '',
+      Province: 'QC',
+      PostalCode: ''
+    },
+    Specialty: '',
+    GenericID: '8464539'
+  },
+  DepositInformation: {
+    ClaimDeposit: 'Bank Account'
+  },
+  Invoice: {
+    Clinic: 'OrthoAction Orthèse / Prothèse',
+    Location: 'St-Mathieu de Beloeil',
+    Address: '4362, Longueuil, suite 105, Quebec, J3G 0R2',
+    ReceiptNumber: 'R-007-78357',
+    Date: '2025-08-35',
+    Orthotist: 'George Miller',
+    TP: '8352 C.O.P',
+    FileNumber: '53279',
+    BilledTo: {
+      Name: 'Robin Noah',
+      Address: '654, Dr. Cuisson, St-Bruno, Quebec, J3Z 6G8'
+    },
+    Items: [
+      {
+        Code: 'OP31A',
+        Description: 'Orthèses plantaires moulées aux pieds fabriquées à partir d\'un moule 3D en cire',
+        Quantity: 1,
+        Price: 550.0,
+        Total: 550.0
+      },
+      {
+        Code: 'AP100',
+        Description: 'Portion non réclamée',
+        Quantity: 1,
+        Price: -300.0,
+        Total: -300.0
+      }
+    ],
+    TotalDue: 250.0
+  },
+  PrescriptionRequest: {
+    Clinic: 'Clinique Familiale des Hauts-Bois',
+    ClinicAddress: '2105 boul. Armand-Frappier, bur.301, Sainte-Julie, Quebec, J3E 3R7',
+    Patient: {
+      Name: 'Robin Noah',
+      NAM: 'MLR64282008 (2067-75)',
+      DOB: '2012-05-31',
+      Sex: 'Femme',
+      FileNumber: 'D62478-N',
+      Phone: '+1 865 875 8642',
+      Email: 'gaty98@hotmail.com',
+      Address: '818 Simoni-Monet St, Beloeil, Quebec, J3G 0G3, Canada'
+    },
+    Reason: 'Orthèses plantaires sur mesure',
+    Description: 'Ci-haut'
+  }
+}
+
 // Generate additional mock claims based on the patterns
 const generateMockClaim = (baseData, variations) => {
   const cities = ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Ottawa', 'Edmonton', 'Winnipeg', 'Quebec City', 'Hamilton', 'Kitchener']
@@ -119,6 +210,22 @@ export const generateClaimsData = () => {
   claims.push(generateMockClaim(sample1Data, { city: 'Toronto', status: 'accepted', date: '2024-11-15' }))
   claims.push(generateMockClaim(sample2Data, { city: 'Toronto', status: 'pending', date: '2024-11-20' }))
   claims.push(generateMockClaim(sample3Data, { city: 'Kitchener', status: 'accepted', date: '2024-11-25' }))
+  claims.push({
+    id: 'CLM-ROBIN-NOAH-20251107',
+    claimNumber: 'SLF-129835',
+    patientName: 'ROBIN NOAH',
+    memberId: '7354648',
+    city: 'St-Bruno',
+    province: 'QC',
+    status: 'pending',
+    amount: 550,
+    currency: 'CAD',
+    submittedDate: '2025-10-25',
+    processedDate: null,
+    dentist: 'George Miller',
+    procedureCount: 1,
+    rawData: externalScenario1Claim
+  })
   
   // Generate additional mock claims for various scenarios
   const cities = ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Ottawa', 'Edmonton', 'Winnipeg', 'Quebec City', 'Hamilton', 'Kitchener']
