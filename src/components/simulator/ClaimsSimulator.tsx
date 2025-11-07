@@ -74,24 +74,29 @@ function ClaimsSimulatorInner({ claim }: ClaimsSimulatorProps) {
     loadFlow,
     currentFlowKey,
   } = useSimulatorStore();
+  const [showExtractionViewer, setShowExtractionViewer] = useState(false);
+  
+  const { fitView } = useReactFlow();
+
   const integrationFlowKey = claim?.integrationType === 'CHESS' ? 'chess' : 'default';
 
   useEffect(() => {
     if (integrationFlowKey !== currentFlowKey) {
       loadFlow(integrationFlowKey);
-      setTimeout(() => {
-        try {
-          fitView({ padding: 0.2 });
-        } catch (e) {
-          console.warn('fitView error:', e);
-        }
-      }, 600);
     }
-  }, [integrationFlowKey, currentFlowKey, loadFlow, fitView]);
-  
-  const [showExtractionViewer, setShowExtractionViewer] = useState(false);
-  
-  const { fitView } = useReactFlow();
+  }, [integrationFlowKey, currentFlowKey, loadFlow]);
+
+  useEffect(() => {
+    if (!reactFlowNodes.length) return;
+    const timer = setTimeout(() => {
+      try {
+        fitView({ padding: 0.2 });
+      } catch (e) {
+        console.warn('fitView error:', e);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [reactFlowNodes, fitView, currentFlowKey]);
   
   // Listen for extraction viewer open event
   useEffect(() => {
