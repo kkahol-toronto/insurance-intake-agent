@@ -7,7 +7,6 @@ import { loadSimulatedData, getTimeSeriesData, getSimulatedCityData } from '../u
 import StatsWidget from '../components/StatsWidget'
 import CityMapWidget from '../components/CityMapWidget'
 import ClaimsTable from '../components/ClaimsTable'
-import ChatWidget from '../components/ChatWidget'
 import logo from '@assets/small_logo.png'
 import './Dashboard.css'
 
@@ -135,13 +134,6 @@ function Dashboard() {
             <CityMapWidget cityData={cityData} claims={claims} />
           </div>
         </div>
-
-        {/* Floating Chat Assistant */}
-        <ChatWidget 
-          claims={claims}
-          statistics={statistics}
-          cityData={cityData}
-        />
 
         <div className="table-section">
           <ClaimsTable claims={claims} />

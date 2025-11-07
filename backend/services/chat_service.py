@@ -2,7 +2,11 @@ import os
 import json
 import requests
 from typing import List, Dict, Any, Optional
+from datetime import datetime
 from dotenv import load_dotenv
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -26,7 +30,8 @@ class ChatService:
     
     def chat(self, user_message: str, chat_history: List[Dict[str, str]] = None, 
              context_type: str = "dashboard", document_id: Optional[int] = None,
-             claims_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+             claims_data: Optional[Dict[str, Any]] = None,
+             event_log: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """
         Chat with dashboard data or documents
         
@@ -43,7 +48,7 @@ class ChatService:
         try:
             # Prepare the system prompt based on context type
             if context_type == "dashboard":
-                system_prompt = self._create_dashboard_prompt(claims_data)
+                system_prompt = self._create_dashboard_prompt(claims_data, event_log)
             elif context_type == "document":
                 system_prompt = self._create_document_prompt(document_id)
             else:
@@ -88,7 +93,8 @@ class ChatService:
                 "error": f"Error processing chat request: {str(e)}"
             }
     
-    def _create_dashboard_prompt(self, claims_data: Optional[Dict[str, Any]] = None) -> str:
+    def _create_dashboard_prompt(self, claims_data: Optional[Dict[str, Any]] = None, 
+                                  event_log: Optional[List[Dict[str, Any]]] = None) -> str:
         """
         Create a system prompt for dashboard chat
         """
@@ -119,26 +125,38 @@ Instructions:
 
 Please help the user understand and analyze their insurance claims data."""
 
+        prompt_parts = [base_prompt]
+        
+        claims_data = claims_data if isinstance(claims_data, dict) else None
+        event_log = event_log if isinstance(event_log, list) else None
+
         if claims_data:
             # Add claims data context
             claims_summary = self._format_claims_data_summary(claims_data)
-            return f"""{base_prompt}
-
-Current Claims Data Summary:
-{claims_summary}
-
-Use this data to provide accurate and relevant responses."""
-        else:
-            return base_prompt
+            prompt_parts.append(f"\nCurrent Claims Data Summary:\n{claims_summary}")
+        
+        if event_log:
+            # Add event log context
+            event_log_summary = self._format_event_log_summary(event_log)
+            prompt_parts.append(f"\nClaims Process Agent Activity Log:\n{event_log_summary}")
+            prompt_parts.append("\nUse the activity log to answer questions about the claims process agent stages, actions taken, extracted information, branching decisions, and outcomes.")
+        
+        if claims_data or event_log:
+            prompt_parts.append("\nUse this data to provide accurate and relevant responses.")
+        
+        return "\n".join(prompt_parts)
     
     def _format_claims_data_summary(self, claims_data: Dict[str, Any]) -> str:
         """
         Format claims data for the prompt
         """
+        if not isinstance(claims_data, dict):
+            return "No claims statistics available."
+
         summary_parts = []
         
         # Statistics
-        if "statistics" in claims_data:
+        if "statistics" in claims_data and isinstance(claims_data.get("statistics"), dict):
             stats = claims_data["statistics"]
             summary_parts.append("Statistics:")
             summary_parts.append(f"  - Processed Today: {stats.get('processedToday', 0)}")
@@ -150,7 +168,7 @@ Use this data to provide accurate and relevant responses."""
             summary_parts.append(f"  - Total Claims: {stats.get('total', 0)}")
         
         # City data
-        if "cityData" in claims_data:
+        if "cityData" in claims_data and isinstance(claims_data.get("cityData"), list):
             city_data = claims_data["cityData"]
             if city_data:
                 summary_parts.append("\nCity-wise Distribution:")
@@ -163,7 +181,7 @@ Use this data to provide accurate and relevant responses."""
                     summary_parts.append(f"  - {city_name}: Total={total}, Accepted={accepted}, Pending={pending}, Denied={denied}")
         
         # Recent claims
-        if "recentClaims" in claims_data:
+        if "recentClaims" in claims_data and isinstance(claims_data.get("recentClaims"), list):
             recent = claims_data["recentClaims"]
             if recent:
                 summary_parts.append("\nRecent Claims (sample):")
@@ -174,6 +192,54 @@ Use this data to provide accurate and relevant responses."""
                     city = claim.get("city", "Unknown")
                     amount = claim.get("amount", 0)
                     summary_parts.append(f"  - {claim_num}: {patient} ({status}) - {city} - ${amount}")
+        
+        return "\n".join(summary_parts)
+    
+    def _format_event_log_summary(self, event_log: List[Dict[str, Any]]) -> str:
+        """
+        Format event log for the prompt
+        """
+        if not isinstance(event_log, list) or not event_log:
+            return "No agent activity events recorded yet."
+
+        summary_parts = []
+        summary_parts.append(f"Total Events Recorded: {len(event_log)}")
+        summary_parts.append("\nChronological Activity Timeline (latest last):")
+
+        for raw_event in event_log:
+            if not isinstance(raw_event, dict):
+                logger.debug("Skipping non-dict event log entry: %s", raw_event)
+                continue
+
+            event = raw_event
+            timestamp = event.get("timestamp", 0)
+            from_node = event.get("fromNodeId")
+            to_node = event.get("toNodeId")
+            reason = event.get("reason", "")
+            action = event.get("action")
+            
+            time_str = datetime.fromtimestamp(timestamp / 1000).strftime("%H:%M:%S") if timestamp else "N/A"
+            
+            if from_node:
+                event_desc = f"{from_node} → {to_node}"
+            else:
+                event_desc = f"Started: {to_node}"
+            
+            summary_parts.append(f"  [{time_str}] {event_desc}")
+            if reason:
+                summary_parts.append(f"    reason: {reason}")
+            if action:
+                summary_parts.append(f"    action: {action}")
+            action_data = event.get("actionData")
+            if action_data:
+                try:
+                    formatted_data = json.dumps(action_data, indent=2)
+                except (TypeError, ValueError) as exc:
+                    logger.debug("Unable to serialize actionData: %s (%s)", action_data, exc)
+                    formatted_data = str(action_data)
+                summary_parts.append("    actionData:")
+                for line in formatted_data.splitlines():
+                    summary_parts.append(f"      {line}")
         
         return "\n".join(summary_parts)
     

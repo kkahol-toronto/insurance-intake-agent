@@ -29,6 +29,8 @@ export type LogEvent = {
   fromNodeId: string | null;
   toNodeId: string;
   reason?: string;
+  action?: string; // e.g., 'showExtraction'
+  actionData?: any; // Additional data for the action
 };
 
 export type FlowData = {

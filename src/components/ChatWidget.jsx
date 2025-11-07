@@ -7,12 +7,13 @@ import './ChatWidget.css'
 // Backend API endpoint
 const API_BASE_URL = 'http://localhost:8004'
 
-function ChatWidget({ claims = [], statistics = null, cityData = [] }) {
+function ChatWidget({ claims = [], statistics = null, cityData = [], eventLog = null }) {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [loadedEventLog, setLoadedEventLog] = useState(null)
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
@@ -22,6 +23,31 @@ function ChatWidget({ claims = [], statistics = null, cityData = [] }) {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Load event log from backend if available (for demo claim)
+  useEffect(() => {
+    const loadEventLog = async () => {
+      try {
+        // Try to load event log for the demo claim
+        const response = await fetch('http://localhost:8004/api/event-log/SLF%20DEN%209997310')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.data) {
+            setLoadedEventLog(data.data.events)
+            console.log('Event log loaded:', data.data.events.length, 'events')
+          }
+        }
+      } catch (error) {
+        // Event log not available yet, that's okay
+        console.log('Event log not available:', error)
+      }
+    }
+
+    // Load event log when chat opens
+    if (isOpen && !loadedEventLog) {
+      loadEventLog()
+    }
+  }, [isOpen, loadedEventLog])
 
   const handleSend = async (e) => {
     e.preventDefault()
@@ -76,6 +102,9 @@ function ChatWidget({ claims = [], statistics = null, cityData = [] }) {
         }))
       }
 
+      // Use event log from prop or loaded event log
+      const eventLogToSend = eventLog || loadedEventLog
+
       // Call backend API
       const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
@@ -86,7 +115,8 @@ function ChatWidget({ claims = [], statistics = null, cityData = [] }) {
           message: userMessageText,
           chat_history: chatHistory,
           context_type: 'dashboard',
-          claims_data: claimsDataContext
+          claims_data: claimsDataContext,
+          event_log: eventLogToSend
         })
       })
 

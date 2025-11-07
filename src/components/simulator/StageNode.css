@@ -101,3 +101,14 @@
   background: var(--green-done, #22C55E);
 }
 
+.stage-node.node-disabled {
+  opacity: 0.3;
+  filter: grayscale(100%);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.stage-node.node-disabled .node-handle {
+  background: rgba(128, 128, 128, 0.5);
+}
+

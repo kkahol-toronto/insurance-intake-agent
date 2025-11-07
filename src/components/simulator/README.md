@@ -1,4 +1,4 @@
-# Claims Process Simulator
+# Claims Process Agent
 
 An interactive visual simulator for the SunLife Insurance claims processing workflow, built with React Flow and TypeScript.
 

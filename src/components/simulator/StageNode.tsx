@@ -9,10 +9,11 @@ interface StageNodeData {
   label: string;
   status: NodeStatus;
   notes?: string[];
+  disabled?: boolean;
 }
 
 function StageNode({ data, selected }: NodeProps<StageNodeData>) {
-  const { label, status, notes = [] } = data;
+  const { label, status, notes = [], disabled = false } = data;
   
   return (
     <motion.div
@@ -20,7 +21,8 @@ function StageNode({ data, selected }: NodeProps<StageNodeData>) {
         'node-idle': status === 'idle',
         'node-active': status === 'active',
         'node-done': status === 'done',
-        'node-selected': selected
+        'node-selected': selected,
+        'node-disabled': disabled
       })}
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.2 }}

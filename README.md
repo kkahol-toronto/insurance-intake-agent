@@ -227,11 +227,11 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8004
 
 The API will be available at `http://localhost:8004`
 
-## Claims Process Simulator
+## Claims Process Agent
 
-The application includes an interactive Claims Process Simulator that allows users to visualize and simulate the claims processing workflow. Click on any claim in the claims table to open the simulator for that claim.
+The application includes an interactive Claims Process Agent that allows users to visualize and simulate the claims processing workflow. Click on any claim in the claims table to open the agent for that claim.
 
-### Simulator Features
+### Agent Features
 - **Interactive node-based flow visualization** using React Flow
 - **Drag and drop nodes** - Click and drag nodes to rearrange the layout (when layout is unlocked)
 - **Scroll to pan** - Use mouse wheel or trackpad to scroll/pan the canvas up, down, left, and right
@@ -244,7 +244,7 @@ The application includes an interactive Claims Process Simulator that allows use
 - **Event log** for tracking transitions
 - **Side panel** showing current node, elapsed time, and next node information
 
-### Simulator Controls
+### Agent Controls
 - **Layout Lock**: Toggle to lock/unlock node positions
 - **Auto Layout**: Automatically arrange all nodes in a grid layout
 - **Play/Pause**: Start or pause the simulation
@@ -253,13 +253,13 @@ The application includes an interactive Claims Process Simulator that allows use
 - **Speed Slider**: Adjust simulation speed (0.25x to 3x)
 - **Branch Policy**: Select branching behavior at Content Validation (Always IGO, Always NIGO once, Random 20% NIGO)
 
-### Simulator Flow
-The simulator visualizes the claims process from Start through CHESS:
+### Agent Flow
+The agent visualizes the claims process from Start through CHESS:
 - Start → Claim Ingestion → Claim Form Enhancement → Classification → Claim Content Validation
 - At Content Validation: Branch to NIGO (Provider Notification) or IGO (Data Enrichment)
 - Data Enrichment → Electronic Claim → Electronic Claim Validation → Gap Assessment → Code Conversion → Claim Data Entry → CHESS
 
-### Simulator Interaction
+### Agent Interaction
 - **Unlocked Mode**: Left-click and drag nodes to move them; middle/right-click to pan canvas
 - **Locked Mode**: Left-click and drag to pan canvas; nodes cannot be moved
 - **Scrolling**: Mouse wheel scrolls/pans the canvas

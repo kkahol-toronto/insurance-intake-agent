@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, useMemo } from 'react';
+import { useEffect, useCallback, useRef, useMemo, useState } from 'react';
 import ReactFlow, {
   Node,
   Edge,
@@ -18,6 +18,17 @@ import StageNode from './StageNode';
 import GlowingEdge from './GlowingEdge';
 import ControlsPanel from './ControlsPanel';
 import SidePanel from './SidePanel';
+import IngestionMessages from './IngestionMessages';
+import FormEnhancementMessages from './FormEnhancementMessages';
+import ClassificationMessages from './ClassificationMessages';
+import ContentValidationMessages from './ContentValidationMessages';
+import DataEnrichmentMessages from './DataEnrichmentMessages';
+import ElectronicClaimValidationMessages from './ElectronicClaimValidationMessages';
+import GapAssessmentMessages from './GapAssessmentMessages';
+import CodeConversionMessages from './CodeConversionMessages';
+import ClaimDataEntryMessages from './ClaimDataEntryMessages';
+import ExtractionViewer from './ExtractionViewer';
+import ChatWidget from '../ChatWidget';
 import { applyLayout } from '../../utils/layoutUtils';
 import './ClaimsSimulator.css';
 
@@ -29,7 +40,14 @@ const edgeTypes = {
   glowingEdge: GlowingEdge,
 };
 
-function ClaimsSimulatorInner() {
+interface ClaimsSimulatorProps {
+  claim?: {
+    claimNumber: string;
+    patientName: string;
+  };
+}
+
+function ClaimsSimulatorInner({ claim }: ClaimsSimulatorProps) {
   const {
     nodes,
     edges,
@@ -42,6 +60,7 @@ function ClaimsSimulatorInner() {
     branchPolicy,
     elapsedTime,
     startTime,
+    eventLog,
     setNodes,
     setEdges,
     setLockLayout,
@@ -52,29 +71,94 @@ function ClaimsSimulatorInner() {
     setIsPaused,
     setElapsedTime,
   } = useSimulatorStore();
-
+  
+  const [showExtractionViewer, setShowExtractionViewer] = useState(false);
+  
   const { fitView } = useReactFlow();
+  
+  // Listen for extraction viewer open event
+  useEffect(() => {
+    const handleShowExtraction = (event: CustomEvent) => {
+      setShowExtractionViewer(true);
+    };
+    
+    window.addEventListener('showExtraction', handleShowExtraction as EventListener);
+    
+    return () => {
+      window.removeEventListener('showExtraction', handleShowExtraction as EventListener);
+    };
+  }, []);
+
+  // Save event log to backend when it changes (for demo claim)
+  useEffect(() => {
+    if (!claim || claim.claimNumber !== 'SLF DEN 9997310' || eventLog.length === 0) {
+      return;
+    }
+
+    // Debounce saves - only save when event log has new entries
+    const saveEventLog = async () => {
+      try {
+        const response = await fetch('http://localhost:8004/api/event-log', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            claim_number: claim.claimNumber,
+            patient_name: claim.patientName,
+            event_log: eventLog,
+          }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Event log saved:', result);
+        } else {
+          console.warn('Failed to save event log:', response.statusText);
+        }
+      } catch (error) {
+        console.warn('Error saving event log:', error);
+      }
+    };
+
+    // Save after a short delay to batch multiple rapid events
+    const timeoutId = setTimeout(saveEventLog, 2000);
+    
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [eventLog, claim]);
   const isUpdatingFromHandler = useRef(false);
   const lastUpdateTime = useRef(0);
 
   // Convert store nodes to ReactFlow nodes - memoized to prevent unnecessary recalculations
   const reactFlowNodes: Node[] = useMemo(() => {
-    return nodes.map(node => ({
-      id: node.id,
-      type: 'stageNode',
-      position: node.position || { x: 0, y: 0 },
-      data: {
-        label: node.label,
-        status: node.status,
-        notes: node.notes,
-      },
-      draggable: !lockLayout,
-      selectable: true,
-      style: {
-        cursor: lockLayout ? 'default' : 'grab',
-      },
-    }));
-  }, [nodes, lockLayout]);
+    const contentValidationNode = nodes.find(n => n.id === 'contentValidation');
+    const shouldDisableProvider =
+      claim?.claimNumber === 'SLF DEN 9997310' && contentValidationNode?.status === 'done';
+
+    return nodes.map(node => {
+      const isProviderNotification = node.id === 'providerNotification';
+      const disabled = isProviderNotification && shouldDisableProvider;
+
+      return {
+        id: node.id,
+        type: 'stageNode',
+        position: node.position || { x: 0, y: 0 },
+        data: {
+          label: node.label,
+          status: node.status,
+          notes: node.notes,
+          disabled,
+        },
+        draggable: !lockLayout && !disabled,
+        selectable: !disabled,
+        style: {
+          cursor: lockLayout || disabled ? 'default' : 'grab',
+        },
+      };
+    });
+  }, [nodes, lockLayout, claim]);
 
   // Convert store edges to ReactFlow edges
   const reactFlowEdges: Edge[] = useMemo(() => edges.map(edge => ({
@@ -118,18 +202,28 @@ function ClaimsSimulatorInner() {
       try {
         // Update store nodes with new positions
         // Apply changes to current nodes to get new positions
-        const currentNodes = nodes.map(node => ({
-          id: node.id,
-          type: 'stageNode',
-          position: node.position || { x: 0, y: 0 },
-          data: {
-            label: node.label,
-            status: node.status,
-            notes: node.notes,
-          },
-          draggable: !lockLayout,
-          selectable: true,
-        }));
+        const contentValidationNode = nodes.find(n => n.id === 'contentValidation');
+        const shouldDisableProvider =
+          claim?.claimNumber === 'SLF DEN 9997310' && contentValidationNode?.status === 'done';
+
+        const currentNodes = nodes.map(node => {
+          const isProviderNotification = node.id === 'providerNotification';
+          const disabled = isProviderNotification && shouldDisableProvider;
+
+          return {
+            id: node.id,
+            type: 'stageNode',
+            position: node.position || { x: 0, y: 0 },
+            data: {
+              label: node.label,
+              status: node.status,
+              notes: node.notes,
+              disabled,
+            },
+            draggable: !lockLayout && !disabled,
+            selectable: !disabled,
+          };
+        });
         
         const updatedReactFlowNodes = applyNodeChanges(changes, currentNodes);
         
@@ -166,7 +260,7 @@ function ClaimsSimulatorInner() {
         }, 50);
       }
     }, 0);
-  }, [nodes, lockLayout, setNodes]);
+  }, [nodes, lockLayout, setNodes, claim]);
 
   // Handle play/pause
   useEffect(() => {
@@ -336,7 +430,7 @@ function ClaimsSimulatorInner() {
         
         <Panel position="top-left" className="simulator-header">
           <div className="header-content">
-            <h2>Claims Process Simulator</h2>
+            <h2>Claims Process Agent</h2>
             <div className="header-controls">
               <button
                 onClick={() => setLockLayout(!lockLayout)}
@@ -373,6 +467,96 @@ function ClaimsSimulatorInner() {
         edges={edges}
       />
 
+      {/* Ingestion Messages - only show when ingestion node is active */}
+      {currentNodeId === 'ingestion' && claim && (
+        <IngestionMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Form Enhancement Messages - only show when formEnhancement node is active */}
+      {currentNodeId === 'formEnhancement' && claim && (
+        <FormEnhancementMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Classification Messages - only show when classification node is active */}
+      {currentNodeId === 'classification' && claim && (
+        <ClassificationMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Content Validation Messages - only show when contentValidation node is active */}
+      {currentNodeId === 'contentValidation' && claim && (
+        <ContentValidationMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Data Enrichment Messages - only show when dataEnrichment node is active */}
+      {currentNodeId === 'dataEnrichment' && claim && (
+        <DataEnrichmentMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Electronic Claim Validation Messages - only show when eClaimValidation node is active */}
+      {currentNodeId === 'eClaimValidation' && claim && (
+        <ElectronicClaimValidationMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Gap Assessment Messages - only show when gapAssessment node is active */}
+      {currentNodeId === 'gapAssessment' && claim && (
+        <GapAssessmentMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Code Conversion Messages - only show when codeConversion node is active */}
+      {currentNodeId === 'codeConversion' && claim && (
+        <CodeConversionMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Claim Data Entry Messages - only show when dataEntryChess node is active */}
+      {currentNodeId === 'dataEntryChess' && claim && (
+        <ClaimDataEntryMessages
+          patientName={claim.patientName}
+          claimNumber={claim.claimNumber}
+        />
+      )}
+
+      {/* Extraction Viewer */}
+      {claim && (
+        <ExtractionViewer
+          isOpen={showExtractionViewer}
+          onClose={() => setShowExtractionViewer(false)}
+          claimNumber={claim.claimNumber}
+          patientName={claim.patientName}
+        />
+      )}
+
+      {/* Chat Widget - only in simulator */}
+      <ChatWidget 
+        claims={[]}
+        statistics={null}
+        cityData={[]}
+        eventLog={eventLog}
+      />
+
       {reactFlowNodes.length > 0 && (
         <Panel position="bottom-center" className="simulator-footer">
           <div className="footer-content">
@@ -399,10 +583,10 @@ function ClaimsSimulatorInner() {
   );
 }
 
-export default function ClaimsSimulator() {
+export default function ClaimsSimulator({ claim }: { claim?: { claimNumber: string; patientName: string } }) {
   return (
     <ReactFlowProvider>
-      <ClaimsSimulatorInner />
+      <ClaimsSimulatorInner claim={claim} />
     </ReactFlowProvider>
   );
 }

@@ -1,0 +1,191 @@
+{
+    "document": {
+        "title": "Dental Claim Form",
+        "issuer": "Sun Life Assurance Company of Canada",
+        "canadian_dental_association_approved": true,
+        "form_code": "DENT-E-03-21",
+        "page_count": 2,
+        "source_file": "Sample 1.pdf",
+        "_citation": "
+    
+    Sample 1
+    
+    "
+    },
+    "section_1_to_be_completed_by_dentist": {
+        "patient": {
+            "last_name": "JOHNSON",
+            "given_name": "AMELIA",
+            "address": {
+                "street": "2412 Pine Grove Ave",
+                "apartment_or_suite": "A36",
+                "city": "Toronto",
+                "province": "ON",
+                "postal_code": "M1C 3K8",
+                "confidence": "medium"
+            },
+            "phone": "416-555-1893"
+        },
+        "insurance_unique_number": "SLF DEN 9997310",
+        "patient_office_account_number": "A1029",
+        "assignment_of_benefits_authorized": true,
+        "authorize_payment_directly_to_dentist": true,
+        "signatures": {
+            "patient_or_guardian_signature_name": "J. Amelia",
+            "office_verification_or_claimant_signature_name": "Dr. Avis Williams",
+            "office_verification_name_confidence": "low"
+        },
+        "services": {
+            "line_items_note": "Three handwritten line items are present; handwriting is partially illegible.",
+            "line_items_count": 3,
+            "line_items": [
+                {
+                    "page": 1,
+                    "row_index": 1,
+                    "date_of_service": "2020-10-28",
+                    "procedure_code": "01110",
+                    "tooth_code": "12",
+                    "tooth_surfaces": "B",
+                    "dentist_fee_amount": null,
+                    "laboratory_charge_amount": null,
+                    "total_charge_amount": null,
+                    "confidence": "low"
+                },
+                {
+                    "page": 1,
+                    "row_index": 2,
+                    "date_of_service": "2020-10-26",
+                    "procedure_code": "01274",
+                    "tooth_code": null,
+                    "tooth_surfaces": null,
+                    "dentist_fee_amount": null,
+                    "laboratory_charge_amount": null,
+                    "total_charge_amount": null,
+                    "confidence": "low"
+                },
+                {
+                    "page": 1,
+                    "row_index": 3,
+                    "date_of_service": "2020-10-28",
+                    "procedure_code": null,
+                    "tooth_code": null,
+                    "tooth_surfaces": null,
+                    "dentist_fee_amount": null,
+                    "laboratory_charge_amount": null,
+                    "total_charge_amount": null,
+                    "confidence": "low"
+                }
+            ],
+            "currency": "CAD",
+            "total_fee_submitted": 310
+        }
+    },
+    "section_2_information_about_you": {
+        "contract_number": null,
+        "member_id_number": null,
+        "plan_sponsor_or_employer": "Sun LIFE dental group",
+        "preferred_language_of_correspondence": "English",
+        "member": {
+            "last_name": "JOHNSON",
+            "first_name": "AMELIA",
+            "date_of_birth": "1985-04-22",
+            "daytime_phone_number": "416-555-1893",
+            "address": {
+                "street": "2412 Pine Grove Ave",
+                "apartment_or_suite": "A36",
+                "city": "Toronto",
+                "province": "ON",
+                "postal_code": "M1C 3K8",
+                "confidence": "medium"
+            }
+        }
+    },
+    "section_3_spouse_and_children": {
+        "applies": false,
+        "entries": []
+    },
+    "section_4_co_ordination_of_benefits": {
+        "spouse_or_children_covered_under_other_dental_plan": "No",
+        "spouse_plan_with_sun_life": null,
+        "co_ordinate_benefits_requested": null,
+        "spouse_contract_number": null,
+        "spouse_member_id_number": null,
+        "spouse_date_of_birth": null,
+        "spouse_signature_on_file": null,
+        "spouse_signature_date": null
+    },
+    "section_5_details_of_claim": {
+        "expenses_result_of_accident": "No",
+        "accident_details": {
+            "date": null,
+            "location": null,
+            "how": null
+        },
+        "expenses_result_of_workers_compensation_condition": "No",
+        "orthodontic_treatment": "No",
+        "implants": "No",
+        "crowns_bridges_dentures": {
+            "initial_placement": null,
+            "date_teeth_extracted": null,
+            "prior_placement_date": null,
+            "reason_for_replacement": null
+        },
+        "supporting_materials_requested": [
+            "Pre-treatment x-rays (for crowns, bridges, veneers, inlays, onlays)",
+            "List of all missing teeth (for bridges only)"
+        ]
+    },
+    "section_6_authorization_and_signature": {
+        "member_signature_name": "J. Amelia",
+        "member_signature_date": "2020-11-07",
+        "authorizations_summary": [
+            "Certifies goods/services were received and information is true/complete",
+            "Authorizes collection, use, and disclosure of information for underwriting, administration, and claims adjudication",
+            "Acknowledges possible fraud investigation and overpayment recovery",
+            "Confirms photocopy/electronic authorization validity for plan administration"
+        ]
+    },
+    "section_7_respecting_your_privacy_summary": {
+        "purpose": "Help clients achieve lifetime financial security and live healthier lives",
+        "uses_of_personal_information": [
+            "Develop/deliver products and services",
+            "Manage business operations",
+            "Underwriting, administration, claims adjudication",
+            "Protect against fraud/errors/misrepresentations",
+            "Inform about other products/services",
+            "Meet legal and security obligations"
+        ],
+        "contact": {
+            "website": "sunlife.ca/privacy",
+            "phone_hours_et": "Mon–Fri, 8am–8pm ET",
+            "toll_free": "1-800-361-6212"
+        }
+    },
+    "mailing_instructions_and_addresses": [
+        {
+            "office": "Sun Life Assurance Company of Canada",
+            "po_box": "PO Box 11658 Stn CV",
+            "city_province_postal": "Montreal QC H3C 6C1"
+        },
+        {
+            "office": "Sun Life Assurance Company of Canada",
+            "po_box": "PO Box 2010 Stn Waterloo",
+            "city_province_postal": "Waterloo ON N2J 0A6"
+        }
+    ],
+    "provenance": {
+        "page_1": [
+            "Patient name, address, phone, unique number, patient office account number, assignment statement/signatures, and service table",
+            "Section 2: member demographics, plan sponsor/employer, preferred language"
+        ],
+        "page_2": [
+            "Section 5 (Details of claim): checkboxes for accident/workers’ comp/orthodontic/implants, crowns/bridges/dentures",
+            "Section 6: member authorization and signature with date",
+            "Section 7: privacy statement and mailing addresses"
+        ]
+    },
+    "extraction_quality_notes": [
+        "Some handwritten fields (service line details, certain IDs, postal code characters, and dentist name) are partially illegible in the scan. These are captured with nulls and/or marked with low confidence.",
+        "Total fee submitted is clearly recorded as 310 CAD; individual line-item amounts were not consistently legible."
+    ]
+}

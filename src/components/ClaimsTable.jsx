@@ -327,7 +327,7 @@ function ClaimsTable({ claims }) {
             }}
           >
             <div className="simulator-modal-header">
-              <h2 id="simulator-title">Claims Process Simulator</h2>
+              <h2 id="simulator-title">Claims Process Agent</h2>
               <p>Claim: {selectedClaim.claimNumber} - {selectedClaim.patientName}</p>
               <button 
                 className="simulator-close-btn"
@@ -357,7 +357,7 @@ function ClaimsTable({ claims }) {
                       <p>Loading simulator for claim: {selectedClaim.claimNumber}...</p>
                     </div>
                   }>
-                    <ClaimsSimulator key={selectedClaim.id} />
+                    <ClaimsSimulator key={selectedClaim.id} claim={selectedClaim} />
                   </Suspense>
                 )}
               </ErrorBoundary>

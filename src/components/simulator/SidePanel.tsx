@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useSimulatorStore } from '../../store/simulatorStore';
-import { FlowNode, FlowEdge } from '../../types/flow';
+import { FlowNode, FlowEdge, LogEvent } from '../../types/flow';
 import './SidePanel.css';
 
 interface SidePanelProps {
@@ -10,7 +11,7 @@ interface SidePanelProps {
 }
 
 function SidePanel({ currentNodeId, elapsedTime, nodes, edges }: SidePanelProps) {
-  const { eventLog } = useSimulatorStore();
+  const { eventLog, updateEventLog } = useSimulatorStore();
   
   const currentNode = nodes.find(n => n.id === currentNodeId);
   const nextNode = currentNodeId ? getNextNode(currentNodeId, nodes, edges) : nodes.find(n => n.id === 'start');
@@ -39,8 +40,10 @@ function SidePanel({ currentNodeId, elapsedTime, nodes, edges }: SidePanelProps)
           {eventLog.length === 0 ? (
             <div className="log-empty">No events yet</div>
           ) : (
-            eventLog.slice().reverse().map((event, index) => (
-              <div key={index} className="log-event">
+            eventLog.slice().reverse().map((event, reverseIndex) => {
+              const actualIndex = eventLog.length - 1 - reverseIndex;
+              return (
+              <div key={actualIndex} className="log-event">
                 <div className="log-time">
                   {new Date(event.timestamp).toLocaleTimeString()}
                 </div>
@@ -63,9 +66,26 @@ function SidePanel({ currentNodeId, elapsedTime, nodes, edges }: SidePanelProps)
                   {event.reason && (
                     <div className="log-reason">{event.reason}</div>
                   )}
+                  {event.action === 'showExtraction' && event.actionData && (
+                    <button
+                      className="log-action-btn"
+                      onClick={() => {
+                        const customEvent = new CustomEvent('showExtraction', {
+                          detail: event.actionData
+                        });
+                        window.dispatchEvent(customEvent);
+                      }}
+                    >
+                      📄 View Extracted Information
+                    </button>
+                  )}
+                  {event.action === 'setPriority' && event.actionData && (
+                    <PrioritySelector event={event} eventIndex={actualIndex} />
+                  )}
                 </div>
               </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
@@ -81,6 +101,69 @@ function getNextNode(currentNodeId: string, nodes: FlowNode[], edges: FlowEdge[]
   // The actual branching logic is in the simulation engine
   const nextNodeId = outgoingEdges[0].target;
   return nodes.find(n => n.id === nextNodeId) || null;
+}
+
+// Priority Selector Component
+function PrioritySelector({ event, eventIndex }: { event: LogEvent; eventIndex: number }) {
+  const { updateEventLog } = useSimulatorStore();
+  const [priority, setPriority] = useState(event.actionData?.priority || 'Low');
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handlePriorityChange = (newPriority: string) => {
+    setPriority(newPriority);
+    setIsEditing(false);
+    
+    // Update the event log with new priority
+    const updatedEvent = {
+      ...event,
+      actionData: {
+        ...event.actionData,
+        priority: newPriority
+      }
+    };
+    updateEventLog(eventIndex, updatedEvent);
+  };
+
+  const priorities = ['Low', 'Medium', 'High', 'Emergency'];
+
+  return (
+    <div className="priority-selector-container">
+      <div className="priority-label">Priority:</div>
+      {isEditing ? (
+        <select
+          className="priority-dropdown"
+          value={priority}
+          onChange={(e) => handlePriorityChange(e.target.value)}
+          onBlur={() => setIsEditing(false)}
+          autoFocus
+        >
+          {priorities.map(p => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+      ) : (
+        <div className="priority-display" onClick={() => setIsEditing(true)}>
+          <span className="priority-value">{priority}</span>
+          <span className="priority-edit-hint">(click to edit)</span>
+        </div>
+      )}
+      {event.actionData?.dentalCodes && (
+        <div className="dental-codes-info">
+          <div className="codes-label">Dental Codes:</div>
+          <div className="codes-list">
+            {event.actionData.dentalCodes.map((code: string, idx: number) => (
+              <div key={idx} className="code-item">
+                <span className="code-value">{code}</span>
+                {event.actionData.codeDescriptions?.[code] && (
+                  <span className="code-description"> - {event.actionData.codeDescriptions[code]}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default SidePanel;
