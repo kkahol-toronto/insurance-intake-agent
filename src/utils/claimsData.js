@@ -209,8 +209,8 @@ export const generateClaimsData = () => {
   
   // Add claims from sample data (based on actual data from JSON files)
   claims.push(generateMockClaim(sample1Data, { city: 'Toronto', status: 'accepted', date: '2024-11-15', integrationType: 'DataIngestion' }))
-  claims.push(generateMockClaim(sample2Data, { city: 'Toronto', status: 'pending', date: '2024-11-20', integrationType: 'Pega' }))
-  claims.push(generateMockClaim(sample3Data, { city: 'Kitchener', status: 'accepted', date: '2024-11-25', integrationType: 'Pega' }))
+  claims.push(generateMockClaim(sample2Data, { city: 'Toronto', status: 'pending', date: '2024-11-20', integrationType: 'DataIngestion' }))
+  claims.push(generateMockClaim(sample3Data, { city: 'Kitchener', status: 'accepted', date: '2024-11-25', integrationType: 'DataIngestion' }))
   claims.push({
     id: 'CLM-ROBIN-NOAH-20251107',
     claimNumber: 'SLF-129835',
@@ -306,7 +306,8 @@ export const generateClaimsData = () => {
     const status = statuses[Math.floor(Math.random() * statuses.length)]
     const date = new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     
-    const integrationType = Math.random() < 0.25 ? 'CHESS' : 'Pega'
+    const integrationRandom = Math.random()
+    const integrationType = integrationRandom < 0.65 ? 'DataIngestion' : integrationRandom < 0.85 ? 'CHESS' : 'Pega'
     const mockClaim = {
       id: `CLM-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 9)}`,
       claimNumber: `SLF-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
