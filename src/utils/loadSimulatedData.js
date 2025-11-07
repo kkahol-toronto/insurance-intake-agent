@@ -56,6 +56,28 @@ const simulatedData = {
   }
 }
 
+const ensureAgentMetrics = (bucket) => {
+  if (!bucket) return
+  Object.keys(bucket).forEach((key) => {
+    const entry = bucket[key]
+    if (!entry || typeof entry !== 'object') return
+    const processed = entry.processed || 0
+    if (typeof entry.pega !== 'number') {
+      entry.pega = Math.round(processed * 0.6)
+    }
+    if (typeof entry.chess !== 'number') {
+      const pega = entry.pega || Math.round(processed * 0.6)
+      entry.chess = Math.max(processed - pega, 0)
+    }
+  })
+}
+
+const stats = simulatedData.statistics
+ensureAgentMetrics(stats.daily)
+ensureAgentMetrics(stats.weekly)
+ensureAgentMetrics(stats.monthly)
+ensureAgentMetrics(stats.quarterly)
+
 export const loadSimulatedData = () => {
   return simulatedData
 }

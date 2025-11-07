@@ -17,9 +17,12 @@
   "dashboard": {
     "title": "Tableau de Bord des Réclamations",
     "logout": "Déconnexion",
+    "processedClaims": "Réclamations Traitées",
     "processedToday": "Traitées Aujourd'hui",
     "processedWeek": "Traitées Cette Semaine",
     "processedMonth": "Traitées Ce Mois",
+    "pegaAgent": "Cas de l'Agent Pega",
+    "chessAgent": "Cas de l'Agent CHESS",
     "acceptedClaims": "Réclamations Acceptées",
     "pendingClaims": "Réclamations en Attente",
     "deniedClaims": "Réclamations Refusées",

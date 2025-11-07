@@ -77,28 +77,46 @@ function Dashboard() {
       <main className="dashboard-content">
         <div className="stats-grid">
           <StatsWidget
-            title={t('dashboard.processedToday')}
+            title={t('dashboard.processedClaims')}
             value={statistics.processedToday}
+            valueByPeriod={{
+              day: statistics.processedToday,
+              week: statistics.processedWeek,
+              month: statistics.processedMonth,
+              quarter: statistics.processedQuarter
+            }}
             icon="📊"
             dataKey="processed"
             timeSeriesData={timeSeriesData}
             timePeriod="day"
           />
           <StatsWidget
-            title={t('dashboard.processedWeek')}
-            value={statistics.processedWeek}
-            icon="📈"
-            dataKey="processed"
+            title={t('dashboard.pegaAgent')}
+            value={statistics.pegaAgent}
+            valueByPeriod={{
+              day: statistics.pegaAgent,
+              week: statistics.pegaAgentWeek,
+              month: statistics.pegaAgentMonth,
+              quarter: statistics.pegaAgentQuarter
+            }}
+            icon="🤖"
+            dataKey="pega"
             timeSeriesData={timeSeriesData}
-            timePeriod="week"
+            timePeriod="day"
           />
           <StatsWidget
-            title={t('dashboard.processedMonth')}
-            value={statistics.processedMonth}
-            icon="📅"
-            dataKey="processed"
+            title={t('dashboard.chessAgent')}
+            value={statistics.chessAgent}
+            valueByPeriod={{
+              day: statistics.chessAgent,
+              week: statistics.chessAgentWeek,
+              month: statistics.chessAgentMonth,
+              quarter: statistics.chessAgentQuarter
+            }}
+            icon="♟️"
+            dataKey="chess"
             timeSeriesData={timeSeriesData}
-            timePeriod="month"
+            timePeriod="day"
           />
           <StatsWidget
             title={t('dashboard.acceptedClaims')}

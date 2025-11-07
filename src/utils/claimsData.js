@@ -174,19 +174,46 @@ export const getClaimsStatistics = (claims, timeSeriesData = null) => {
     const dailyEntries = Object.entries(timeSeriesData.daily).sort(([a], [b]) => new Date(a) - new Date(b))
     const latestDaily = dailyEntries[dailyEntries.length - 1]
     const previousDaily = dailyEntries[dailyEntries.length - 2]
+    const weeklyEntries = timeSeriesData.weekly ? Object.entries(timeSeriesData.weekly).sort(([a], [b]) => new Date(a) - new Date(b)) : []
+    const monthlyEntries = timeSeriesData.monthly ? Object.entries(timeSeriesData.monthly).sort(([a], [b]) => a.localeCompare(b)) : []
+    const quarterlyEntries = timeSeriesData.quarterly ? Object.entries(timeSeriesData.quarterly).sort(([a], [b]) => a.localeCompare(b)) : []
     
     if (latestDaily) {
       const latest = latestDaily[1]
       const previous = previousDaily ? previousDaily[1] : null
+      const latestWeekly = weeklyEntries.length ? weeklyEntries[weeklyEntries.length - 1][1] : null
+      const latestMonthly = monthlyEntries.length ? monthlyEntries[monthlyEntries.length - 1][1] : null
+      const latestQuarterly = quarterlyEntries.length ? quarterlyEntries[quarterlyEntries.length - 1][1] : null
+
+      const getAgentCounts = (entry) => {
+        if (!entry) return { pega: 0, chess: 0 }
+        const processed = entry.processed || 0
+        const pega = typeof entry.pega === 'number' ? entry.pega : Math.round(processed * 0.6)
+        const chess = typeof entry.chess === 'number' ? entry.chess : Math.max(processed - pega, 0)
+        return { pega, chess }
+      }
+      const dailyAgents = getAgentCounts(latest)
+      const weeklyAgents = getAgentCounts(latestWeekly)
+      const monthlyAgents = getAgentCounts(latestMonthly)
+      const quarterlyAgents = getAgentCounts(latestQuarterly)
       
       // Use the latest time series data for today's values
       return {
         processedToday: latest.processed || 0,
-        processedWeek: timeSeriesData.weekly ? Object.values(timeSeriesData.weekly).slice(-1)[0]?.processed || 0 : 0,
-        processedMonth: timeSeriesData.monthly ? Object.values(timeSeriesData.monthly).slice(-1)[0]?.processed || 0 : 0,
+        processedWeek: latestWeekly?.processed || 0,
+        processedMonth: latestMonthly?.processed || 0,
+        processedQuarter: latestQuarterly?.processed || 0,
         accepted: latest.accepted || 0,
         pending: latest.pending || 0,
         denied: latest.denied || 0,
+        pegaAgent: dailyAgents.pega,
+        chessAgent: dailyAgents.chess,
+        pegaAgentWeek: weeklyAgents.pega,
+        chessAgentWeek: weeklyAgents.chess,
+        pegaAgentMonth: monthlyAgents.pega,
+        chessAgentMonth: monthlyAgents.chess,
+        pegaAgentQuarter: quarterlyAgents.pega,
+        chessAgentQuarter: quarterlyAgents.chess,
         total: claims.length
       }
     }
@@ -212,18 +239,38 @@ export const getClaimsStatistics = (claims, timeSeriesData = null) => {
     const date = new Date(c.processedDate || c.submittedDate)
     return date >= monthAgo
   }).length
+  const processedQuarter = processedMonth // simple fallback approximation
   
   const accepted = claims.filter(c => c.status === 'accepted').length
   const pending = claims.filter(c => c.status === 'pending').length
   const denied = claims.filter(c => c.status === 'denied').length
+
+  const estimateAgents = (count) => {
+    const pega = Math.round(count * 0.6)
+    const chess = Math.max(count - pega, 0)
+    return { pega, chess }
+  }
+  const dailyAgents = estimateAgents(processedToday)
+  const weeklyAgents = estimateAgents(processedWeek)
+  const monthlyAgents = estimateAgents(processedMonth)
+  const quarterlyAgents = estimateAgents(processedQuarter)
   
   return {
     processedToday,
     processedWeek,
     processedMonth,
+    processedQuarter,
     accepted,
     pending,
     denied,
+    pegaAgent: dailyAgents.pega,
+    chessAgent: dailyAgents.chess,
+    pegaAgentWeek: weeklyAgents.pega,
+    chessAgentWeek: weeklyAgents.chess,
+    pegaAgentMonth: monthlyAgents.pega,
+    chessAgentMonth: monthlyAgents.chess,
+    pegaAgentQuarter: quarterlyAgents.pega,
+    chessAgentQuarter: quarterlyAgents.chess,
     total: claims.length
   }
 }

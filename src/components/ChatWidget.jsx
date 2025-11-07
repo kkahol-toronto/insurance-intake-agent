@@ -81,9 +81,18 @@ function ChatWidget({ claims = [], statistics = null, cityData = [], eventLog = 
           processedToday: statistics.processedToday,
           processedWeek: statistics.processedWeek,
           processedMonth: statistics.processedMonth,
+          processedQuarter: statistics.processedQuarter,
           accepted: statistics.accepted,
           pending: statistics.pending,
           denied: statistics.denied,
+          pegaAgent: statistics.pegaAgent,
+          pegaAgentWeek: statistics.pegaAgentWeek,
+          pegaAgentMonth: statistics.pegaAgentMonth,
+          pegaAgentQuarter: statistics.pegaAgentQuarter,
+          chessAgent: statistics.chessAgent,
+          chessAgentWeek: statistics.chessAgentWeek,
+          chessAgentMonth: statistics.chessAgentMonth,
+          chessAgentQuarter: statistics.chessAgentQuarter,
           total: statistics.total
         } : null,
         cityData: cityData.slice(0, 10).map(city => ({

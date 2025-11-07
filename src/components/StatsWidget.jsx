@@ -3,12 +3,23 @@ import { useTranslation } from 'react-i18next'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import './StatsWidget.css'
 
-function StatsWidget({ title, value, icon, color = 'default', dataKey, timeSeriesData, timePeriod }) {
+function StatsWidget({ title, value, valueByPeriod, icon, color = 'default', dataKey, timeSeriesData, timePeriod }) {
   const { t } = useTranslation()
   const [selectedPeriod, setSelectedPeriod] = useState(timePeriod || 'day')
   const [showGraph, setShowGraph] = useState(true) // Show graphs by default
   const [chartType, setChartType] = useState('line') // 'line' or 'bar'
   const chartRef = useRef(null)
+
+  const currentValue = useMemo(() => {
+    if (valueByPeriod && typeof valueByPeriod === 'object') {
+      const periodValue = valueByPeriod[selectedPeriod]
+      if (typeof periodValue === 'number') return periodValue
+    }
+    if (typeof value === 'number') {
+      return value
+    }
+    return 0
+  }, [valueByPeriod, selectedPeriod, value])
 
   const chartData = useMemo(() => {
     if (!timeSeriesData) return []
@@ -68,9 +79,9 @@ function StatsWidget({ title, value, icon, color = 'default', dataKey, timeSerie
 
   const percentageChange = useMemo(() => {
     if (previousValue === null || previousValue === 0) return null
-    const change = ((value - previousValue) / previousValue) * 100
+    const change = ((currentValue - previousValue) / previousValue) * 100
     return change
-  }, [value, previousValue])
+  }, [currentValue, previousValue])
 
   const handleDownloadPNG = () => {
     if (!chartRef.current) return
@@ -250,7 +261,7 @@ function StatsWidget({ title, value, icon, color = 'default', dataKey, timeSerie
       </div>
       
       <div className="stats-value-container">
-        <div className="stats-value">{value.toLocaleString()}</div>
+        <div className="stats-value">{currentValue.toLocaleString()}</div>
         {percentageChange !== null && (
           <div className={`percentage-change ${percentageChange >= 0 ? 'positive' : 'negative'}`}>
             {percentageChange >= 0 ? '↑' : '↓'} {Math.abs(percentageChange).toFixed(1)}%

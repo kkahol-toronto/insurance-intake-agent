@@ -17,9 +17,12 @@
   "dashboard": {
     "title": "Claims Dashboard",
     "logout": "Logout",
+    "processedClaims": "Processed Claims",
     "processedToday": "Processed Today",
     "processedWeek": "Processed This Week",
     "processedMonth": "Processed This Month",
+    "pegaAgent": "Pega Agent Cases",
+    "chessAgent": "CHESS Agent Cases",
     "acceptedClaims": "Accepted Claims",
     "pendingClaims": "Pending Claims",
     "deniedClaims": "Denied Claims",

@@ -162,9 +162,14 @@ Please help the user understand and analyze their insurance claims data."""
             summary_parts.append(f"  - Processed Today: {stats.get('processedToday', 0)}")
             summary_parts.append(f"  - Processed This Week: {stats.get('processedWeek', 0)}")
             summary_parts.append(f"  - Processed This Month: {stats.get('processedMonth', 0)}")
+            summary_parts.append(f"  - Processed This Quarter: {stats.get('processedQuarter', 0)}")
             summary_parts.append(f"  - Accepted Claims: {stats.get('accepted', 0)}")
             summary_parts.append(f"  - Pending Claims: {stats.get('pending', 0)}")
             summary_parts.append(f"  - Denied Claims: {stats.get('denied', 0)}")
+            if any(key in stats for key in ["pegaAgent", "chessAgent"]):
+                summary_parts.append("  - Agent Intake (latest period):")
+                summary_parts.append(f"    • Pega Agent Cases: {stats.get('pegaAgent', 0)} (week: {stats.get('pegaAgentWeek', 0)}, month: {stats.get('pegaAgentMonth', 0)})")
+                summary_parts.append(f"    • CHESS Agent Cases: {stats.get('chessAgent', 0)} (week: {stats.get('chessAgentWeek', 0)}, month: {stats.get('chessAgentMonth', 0)})")
             summary_parts.append(f"  - Total Claims: {stats.get('total', 0)}")
         
         # City data
