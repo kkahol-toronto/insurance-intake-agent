@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
@@ -9,6 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from services.chat_service import ChatService
+from services.pdf_ingestion_service import PDFIngestionService
 
 # Load environment variables
 load_dotenv()
@@ -36,6 +37,7 @@ app.add_middleware(
 
 # Initialize chat service
 chat_service = ChatService()
+pdf_ingestion_service = PDFIngestionService()
 
 # Create data directory for event logs if it doesn't exist
 EVENT_LOG_DIR = Path("data/event_logs")
@@ -63,6 +65,15 @@ class ChatResponse(BaseModel):
     success: bool
     response: Optional[str] = None
     error: Optional[str] = None
+
+
+class PDFIngestionResponse(BaseModel):
+    success: bool
+    data: Optional[Dict[str, Any]] = None
+    raw_response: Optional[str] = None
+    error: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+    parse_error: Optional[str] = None
 
 @app.get("/")
 async def root():
@@ -104,6 +115,33 @@ async def chat(request: ChatRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing chat request: {str(e)}")
+
+
+@app.post("/api/pdf-ingestion", response_model=PDFIngestionResponse)
+async def pdf_ingestion_agent(file: UploadFile = File(...)):
+    """
+    Extract structured data from an uploaded PDF using Azure OpenAI.
+    """
+    try:
+        file_bytes = await file.read()
+        if not file_bytes:
+            raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+
+        result = pdf_ingestion_service.process_pdf(file_bytes, file.filename or "uploaded.pdf")
+
+        return PDFIngestionResponse(
+            success=True,
+            data=result.get("parsed_json"),
+            raw_response=result.get("raw_response"),
+            metadata=result.get("metadata"),
+            parse_error=result.get("parse_error"),
+        )
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except RuntimeError as re:
+        raise HTTPException(status_code=502, detail=str(re))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
 
 @app.post("/api/event-log")
 async def save_event_log(request: EventLogRequest):

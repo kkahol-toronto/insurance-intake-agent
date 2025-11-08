@@ -5,6 +5,7 @@ FastAPI backend for the SunLife Insurance Intake Portal, providing chat function
 ## Features
 
 - **Chat Service**: Interactive chat with dashboard data and documents
+- **PDF Ingestion Agent**: Upload a claim PDF and receive structured JSON output
 - **Azure OpenAI Integration**: Powered by Azure OpenAI for intelligent responses
 - **Dashboard Context**: Chat with claims statistics and data
 - **Document Support**: Chat with insurance documents (ready for extension)
@@ -47,6 +48,8 @@ pip install -r requirements.txt
    AZURE_OPENAI_KEY=your-api-key-here
    AZURE_OPENAI_MODEL=gpt-4
    AZURE_OPENAI_DEPLOYMENT=gpt-4
+AZURE_OPENAI_PDF_DEPLOYMENT=gpt-4o-mini    # Optional dedicated deployment for PDF ingestion
+AZURE_OPENAI_API_VERSION=2024-02-15-preview
    ```
 
 ## Running the Server
@@ -130,6 +133,44 @@ Chat endpoint for interacting with dashboard data and documents.
 }
 ```
 
+### PDF Ingestion
+
+```bash
+POST /api/pdf-ingestion
+Content-Type: multipart/form-data
+```
+
+Upload a PDF dental/medical claim document and receive structured JSON extracted by the Azure OpenAI-powered ingestion agent.
+
+**curl example**
+```bash
+curl -X POST http://localhost:8000/api/pdf-ingestion \
+  -F "file=@data/pend_data/Scenario\ 1/Sunlife\ Sample\ 1\ (Additional\ document).pdf"
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "ClaimantInformation": { "...": "..." },
+    "ClaimDetails": {},
+    "ProviderInformation": {},
+    "Invoice": {},
+    "PrescriptionRequest": {},
+    "AdditionalNotes": ""
+  },
+  "raw_response": "{...}",
+  "metadata": {
+    "page_count": 4,
+    "truncated": false,
+    "character_count": 18750,
+    "max_chars": 20000
+  },
+  "parse_error": null
+}
+```
+
 ## API Documentation
 
 Once the server is running, you can access:
@@ -138,12 +179,15 @@ Once the server is running, you can access:
 
 ## Configuration
 
-The chat service uses the following environment variables in `backend/.env`:
+The services use the following environment variables in `backend/.env`:
 
 - `AZURE_OPENAI_ENDPOINT`: Azure OpenAI endpoint URL (required)
 - `AZURE_OPENAI_KEY`: Azure OpenAI API key (required)
 - `AZURE_OPENAI_MODEL`: Model name (default: gpt-4)
 - `AZURE_OPENAI_DEPLOYMENT`: Deployment name (default: gpt-4)
+- `AZURE_OPENAI_PDF_DEPLOYMENT`: Optional deployment name dedicated to PDF ingestion (falls back to `AZURE_OPENAI_DEPLOYMENT`)
+- `AZURE_OPENAI_API_VERSION`: Azure OpenAI API version (default: 2024-02-15-preview)
+- `PDF_INGESTION_MAX_CHARS`: Optional character limit applied when sending PDF text to the model (default: 20000)
 
 **Note**: The service requires Azure OpenAI to be configured. If not configured, it will return clear error messages instead of fallback responses.
 
