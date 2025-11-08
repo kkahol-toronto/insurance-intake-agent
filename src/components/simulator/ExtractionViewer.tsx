@@ -6,6 +6,7 @@ interface DocumentConfig {
   pdfPath?: string;
   jsonPath?: string;
   title?: string;
+  useLiveExtraction?: boolean;
 }
 
 interface ExtractionViewerProps {
@@ -36,6 +37,9 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
   const [extractedData, setExtractedData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'raw' | 'tabular'>('raw');
+  const [rawResponse, setRawResponse] = useState<string | null>(null);
+  const [liveExtractionError, setLiveExtractionError] = useState<string | null>(null);
+  const [isRunningLive, setIsRunningLive] = useState(false);
 
   const candidateConfigs = useMemo(() => {
     const configs: DocumentConfig[] = [];
@@ -60,6 +64,8 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
     setLoading(true);
     setActiveTab('raw');
     setExtractedData(null);
+    setRawResponse(null);
+    setLiveExtractionError(null);
 
     const pdfCandidate = candidateConfigs.find(config => config.pdfPath)?.pdfPath || null;
     setPdfUrl(pdfCandidate);
@@ -68,67 +74,53 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
       .map(config => config.jsonPath)
       .filter((path): path is string => Boolean(path));
 
-    if (jsonCandidates.length === 0) {
-      console.warn('No JSON paths available for claim:', claimNumber);
-      setLoading(false);
-      return;
-    }
-
-    // Try each path until one works
-    const tryLoadJson = async (paths: string[], index: number = 0) => {
+    const tryLoadJson = async (paths: string[], index: number = 0): Promise<boolean> => {
       if (index >= paths.length) {
-        console.error('Failed to load JSON from all candidate paths:', paths);
-        setLoading(false);
-        return;
+        return false;
       }
-      
+
       try {
         const response = await fetch(paths[index], {
-          headers: {
-            'Accept': 'application/json',
-          },
+          headers: { 'Accept': 'application/json' },
           cache: 'no-cache',
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const text = await response.text();
         if (process.env.NODE_ENV === 'development') {
           console.log('Raw response from', paths[index], ':', text.substring(0, 200));
         }
-        
-        // Clean the JSON text - properly escape control characters within string values
-        // This function escapes control characters in JSON string values
+
         const cleanJsonString = (jsonStr: string): string => {
           let result = '';
           let inString = false;
           let escapeNext = false;
-          
+
           for (let i = 0; i < jsonStr.length; i++) {
             const char = jsonStr[i];
-            
+
             if (escapeNext) {
               result += char;
               escapeNext = false;
               continue;
             }
-            
+
             if (char === '\\') {
               result += char;
               escapeNext = true;
               continue;
             }
-            
+
             if (char === '"') {
               inString = !inString;
               result += char;
               continue;
             }
-            
+
             if (inString) {
-              // Inside a string, escape control characters
               if (char === '\n') {
                 result += '\\n';
               } else if (char === '\r') {
@@ -136,25 +128,22 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
               } else if (char === '\t') {
                 result += '\\t';
               } else if (char >= '\x00' && char <= '\x1F') {
-                // Escape other control characters
                 const code = char.charCodeAt(0);
                 result += `\\u${code.toString(16).padStart(4, '0')}`;
               } else {
                 result += char;
               }
             } else {
-              // Outside strings, just normalize whitespace
               if (char === '\r') {
-                // Skip carriage returns outside strings
                 continue;
               }
               result += char;
             }
           }
-          
+
           return result;
         };
-        
+
         const cleanedText = cleanJsonString(text);
         const data = JSON.parse(cleanedText);
         if (process.env.NODE_ENV === 'development') {
@@ -162,19 +151,82 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
         }
         setExtractedData(data);
         setLoading(false);
+        return true;
       } catch (error) {
         console.warn(`Failed to load JSON from ${paths[index]}:`, error);
-        // Try next path
-        tryLoadJson(paths, index + 1);
+        return tryLoadJson(paths, index + 1);
       }
     };
-    
-    tryLoadJson(jsonCandidates);
-  }, [isOpen, claimNumber, candidateConfigs]);
+
+    const attemptLiveExtraction = async (): Promise<boolean> => {
+      if (!documentConfig?.useLiveExtraction || !pdfCandidate) {
+        return false;
+      }
+      try {
+        setIsRunningLive(true);
+        const pdfResponse = await fetch(pdfCandidate, { cache: 'no-store' });
+        if (!pdfResponse.ok) {
+          throw new Error(`Failed to fetch PDF (${pdfResponse.status})`);
+        }
+        const pdfBlob = await pdfResponse.blob();
+        const fileName =
+          pdfCandidate.split('/').pop() || `${claimNumber.replace(/\s+/g, '_')}.pdf`;
+        const pdfFile = new File([pdfBlob], fileName, {
+          type: pdfBlob.type || 'application/pdf',
+        });
+
+        const formData = new FormData();
+        formData.append('file', pdfFile);
+
+        const baseUrl =
+          import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '') || 'http://localhost:8004';
+        const response = await fetch(`${baseUrl}/api/pdf-ingestion`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result?.success) {
+          throw new Error(result?.error || `Live extraction failed (${response.status})`);
+        }
+
+        setExtractedData(result.data);
+        setRawResponse(result.raw_response || null);
+        setLiveExtractionError(result.parse_error || null);
+        setLoading(false);
+        return true;
+      } catch (error: any) {
+        const message = error?.message || 'Live extraction failed';
+        console.warn('Live extraction error:', message);
+        setLiveExtractionError(message);
+        return false;
+      } finally {
+        setIsRunningLive(false);
+      }
+    };
+
+    (async () => {
+      let success = false;
+      if (documentConfig?.useLiveExtraction) {
+        success = await attemptLiveExtraction();
+      }
+      if (!success) {
+        if (jsonCandidates.length === 0) {
+          setLoading(false);
+        } else {
+          await tryLoadJson(jsonCandidates);
+        }
+      }
+    })();
+  }, [isOpen, claimNumber, candidateConfigs, documentConfig]);
 
   useEffect(() => {
     if (!isOpen) {
       setPdfUrl(null);
+      setRawResponse(null);
+      setLiveExtractionError(null);
+      setIsRunningLive(false);
     }
   }, [isOpen]);
 
@@ -228,6 +280,11 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
                 <div className="json-viewer">
                   <div className="viewer-header">
                     <h3>Extracted Data (JSON)</h3>
+                    {documentConfig?.useLiveExtraction && (
+                      <span className={`live-extraction-pill ${isRunningLive ? 'running' : extractedData ? 'success' : liveExtractionError ? 'error' : ''}`}>
+                        {isRunningLive ? 'Running Extraction…' : liveExtractionError ? 'Live Extraction (fallback)' : 'Live Extraction'}
+                      </span>
+                    )}
                     {extractedData && (
                       <button
                         className="copy-btn"
@@ -275,9 +332,22 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
                         <p style={{ color: '#999', textAlign: 'center', fontSize: '12px' }}>
                           Expected path: {primaryJsonPath || 'No JSON path configured'}
                         </p>
+                        {liveExtractionError && (
+                          <p style={{ color: '#ECAB23', textAlign: 'center', fontSize: '12px' }}>
+                            Live extraction error: {liveExtractionError}
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
+                  {rawResponse && (
+                    <details className="raw-response-detail">
+                      <summary>View Raw Model Response</summary>
+                      <pre className="raw-response-content">
+                        {rawResponse}
+                      </pre>
+                    </details>
+                  )}
                 </div>
               </>
             )}

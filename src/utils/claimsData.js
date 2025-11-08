@@ -92,10 +92,12 @@ const extractionAssets = {
   saraSmith: {
     pdfPath: '/data/initial_agent_sample_data_from_client/2025_11_03_02.pdf',
     jsonPath: '/data/initial_agent_sample_data_from_client/extracted_data/2025_11_03_02.json',
+    useLiveExtraction: true,
   },
   davidAnderson: {
     pdfPath: '/data/initial_agent_sample_data_from_client/2025_11_03_03.pdf',
     jsonPath: '/data/initial_agent_sample_data_from_client/extracted_data/2025_11_03_03.json',
+    useLiveExtraction: true,
   },
 };
 
