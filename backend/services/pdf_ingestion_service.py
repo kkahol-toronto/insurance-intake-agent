@@ -31,6 +31,9 @@ class PDFIngestionService:
             "AZURE_OPENAI_DEPLOYMENT"
         )
         self.api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2024-02-15-preview")
+        self.include_text = (
+            os.getenv("PDF_INGESTION_INCLUDE_TEXT", "true").strip().lower() != "false"
+        )
 
         self.configured = bool(
             self.openai_endpoint and self.openai_key and self.openai_deployment
@@ -57,10 +60,12 @@ class PDFIngestionService:
         text, metadata = self._extract_pdf_text(pdf_bytes)
         page_images, image_info = self._render_pdf_images(pdf_bytes)
         metadata.update(image_info)
-        if not text.strip():
+        if self.include_text and not text.strip():
             raise ValueError("Unable to extract readable text from PDF.")
 
-        messages = self._build_prompt(text, file_name, metadata, page_images)
+        prompt_text = text if self.include_text else ""
+
+        messages = self._build_prompt(prompt_text, file_name, metadata, page_images)
 
         raw_response = self._call_azure_openai(messages)
 
@@ -208,13 +213,22 @@ class PDFIngestionService:
                     + "\n\n".join(example_jsons)
                 )
 
-        user_prompt = (
-            f"Document name: {file_name}\n"
-            f"Page count: {metadata.get('page_count')}\n"
-            f"Characters processed: {metadata.get('character_count')} "
-            f"(truncated={metadata.get('truncated')})\n\n"
-            f"Document content begins below:\n{document_text}"
-        )
+        if self.include_text:
+            user_prompt = (
+                f"Document name: {file_name}\n"
+                f"Page count: {metadata.get('page_count')}\n"
+                f"Characters processed: {metadata.get('character_count')} "
+                f"(truncated={metadata.get('truncated')})\n\n"
+                f"Document content begins below:\n{document_text}"
+            )
+        else:
+            user_prompt = (
+                f"Document name: {file_name}\n"
+                f"Page count: {metadata.get('page_count')}\n"
+                "Text extraction was deliberately skipped. "
+                "Use only the supplied page images to read the document and extract every data field. "
+                "Return the structured JSON exactly as specified in the instructions."
+            )
 
         system_content: List[Dict[str, str]] = [{"type": "text", "text": instructions}]
         if examples_snippet:

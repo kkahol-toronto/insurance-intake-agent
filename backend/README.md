@@ -53,6 +53,7 @@ pip install -r requirements.txt
    PDF_INGESTION_MAX_CHARS=20000
    PDF_INGESTION_MAX_PAGES=3
    PDF_INGESTION_RENDER_SCALE=2.0
+   PDF_INGESTION_INCLUDE_TEXT=true   # Set to false to send images only
    ```
 
 ## Running the Server
@@ -193,6 +194,7 @@ The services use the following environment variables in `backend/.env`:
 - `PDF_INGESTION_MAX_CHARS`: Optional character limit applied when sending PDF text to the model (default: 20000)
 - `PDF_INGESTION_MAX_PAGES`: Optional cap on the number of PDF pages rendered into images for the multimodal prompt (default: 3)
 - `PDF_INGESTION_RENDER_SCALE`: Scaling factor when rasterizing PDF pages (default: 2.0)
+- `PDF_INGESTION_INCLUDE_TEXT`: Set to `false` to skip sending OCR text and provide only page images to the LLM (default: true)
 
 **Note**: The service requires Azure OpenAI to be configured. If not configured, it will return clear error messages instead of fallback responses.
 
