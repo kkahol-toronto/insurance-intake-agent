@@ -153,14 +153,15 @@ class PDFIngestionService:
 
             for index in range(min(total_pages, max_pages)):
                 page = pdf[index]
-                pil_image: Image.Image = page.render_topil(
+                bitmap = page.render(
                     scale=scale,
                     rotation=0,
                     crop=(0, 0, 0, 0),
                     color=pdfium.Colorspace.RGB,
-                    annot=False,
                     greyscale=False,
+                    annot=False,
                 )
+                pil_image: Image.Image = bitmap.to_pil()
 
                 buffer = io.BytesIO()
                 pil_image.save(buffer, format="JPEG", quality=85)
@@ -175,6 +176,8 @@ class PDFIngestionService:
                     }
 
                 page.close()
+                pil_image.close()
+                bitmap.close()
 
             pdf.close()
             image_info["rendered_page_count"] = len(images)
