@@ -40,6 +40,9 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
   const [rawResponse, setRawResponse] = useState<string | null>(null);
   const [liveExtractionError, setLiveExtractionError] = useState<string | null>(null);
   const [isRunningLive, setIsRunningLive] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editBuffer, setEditBuffer] = useState('');
+  const [editError, setEditError] = useState<string | null>(null);
 
   const candidateConfigs = useMemo(() => {
     const configs: DocumentConfig[] = [];
@@ -150,6 +153,7 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
           console.log('Successfully loaded JSON from:', paths[index]);
         }
         setExtractedData(data);
+        setEditBuffer(JSON.stringify(data, null, 2));
         setLoading(false);
         return true;
       } catch (error) {
@@ -192,6 +196,7 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
         }
 
         setExtractedData(result.data);
+        setEditBuffer(JSON.stringify(result.data, null, 2));
         setRawResponse(result.raw_response || null);
         setLiveExtractionError(result.parse_error || null);
         setLoading(false);
@@ -227,8 +232,50 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
       setRawResponse(null);
       setLiveExtractionError(null);
       setIsRunningLive(false);
+      setIsEditing(false);
+      setEditError(null);
+      setEditBuffer('');
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (extractedData && !isEditing) {
+      setEditBuffer(JSON.stringify(extractedData, null, 2));
+    }
+  }, [extractedData, isEditing]);
+
+  const handleToggleEdit = () => {
+    if (!extractedData) return;
+    setIsEditing(true);
+    setActiveTab('raw');
+    setEditBuffer(JSON.stringify(extractedData, null, 2));
+    setEditError(null);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditError(null);
+    setEditBuffer(JSON.stringify(extractedData, null, 2));
+  };
+
+  const handleSaveEdit = () => {
+    try {
+      const parsed = JSON.parse(editBuffer);
+      setExtractedData(parsed);
+      setIsEditing(false);
+      setEditError(null);
+    } catch (error: any) {
+      setEditError(error?.message || 'Invalid JSON structure');
+    }
+  };
+
+  const handleTableValueChange = (path: (string | number)[], newValue: any) => {
+    setExtractedData((prev: any) => {
+      const updated = setNestedValue(prev, path, newValue);
+      setEditBuffer(JSON.stringify(updated, null, 2));
+      return updated;
+    });
+  };
 
   if (!isOpen) {
     return null;
@@ -299,30 +346,56 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
                   </div>
                   
                   {extractedData && (
-                    <div className="tabs-container">
-                      <button
-                        className={`tab-btn ${activeTab === 'raw' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('raw')}
-                      >
-                        Raw JSON
-                      </button>
-                      <button
-                        className={`tab-btn ${activeTab === 'tabular' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('tabular')}
-                      >
-                        Tabular View
-                      </button>
-                    </div>
+                    <>
+                      <div className="edit-controls">
+                        {!isEditing ? (
+                          <button
+                            className="edit-btn"
+                            onClick={handleToggleEdit}
+                          >
+                            ✏️ Edit
+                          </button>
+                        ) : (
+                          <div className="edit-actions">
+                            <button className="edit-btn primary" onClick={handleSaveEdit}>💾 Save</button>
+                            <button className="edit-btn" onClick={handleCancelEdit}>Cancel</button>
+                          </div>
+                        )}
+                        {editError && <span className="edit-error">{editError}</span>}
+                      </div>
+                      <div className="tabs-container">
+                        <button
+                          className={`tab-btn ${activeTab === 'raw' ? 'active' : ''}`}
+                          onClick={() => setActiveTab('raw')}
+                        >
+                          Raw JSON
+                        </button>
+                        <button
+                          className={`tab-btn ${activeTab === 'tabular' ? 'active' : ''}`}
+                          onClick={() => setActiveTab('tabular')}
+                        >
+                          Tabular View
+                        </button>
+                      </div>
+                    </>
                   )}
-                  
+
                   <div className="json-container">
                     {extractedData ? (
                       activeTab === 'raw' ? (
-                        <pre className="json-content">
-                          {JSON.stringify(extractedData, null, 2)}
-                        </pre>
+                        isEditing ? (
+                          <textarea
+                            className="json-editor"
+                            value={editBuffer}
+                            onChange={(e) => setEditBuffer(e.target.value)}
+                          />
+                        ) : (
+                          <pre className="json-content">
+                            {JSON.stringify(extractedData, null, 2)}
+                          </pre>
+                        )
                       ) : (
-                        <TabularView data={extractedData} />
+                        <TabularView data={extractedData} editing={isEditing} onValueChange={handleTableValueChange} />
                       )
                     ) : (
                       <div className="error-container">
@@ -359,22 +432,69 @@ function ExtractionViewer({ isOpen, onClose, claimNumber, patientName, documentC
 }
 
 // Tabular View Component
-function TabularView({ data }: { data: any }) {
-  const renderValue = (value: any, depth: number = 0): JSX.Element | string => {
+function TabularView({
+  data,
+  editing,
+  onValueChange,
+}: {
+  data: any;
+  editing: boolean;
+  onValueChange: (path: (string | number)[], value: any) => void;
+}) {
+  const renderValue = (value: any, depth: number = 0, path: (string | number)[] = []): JSX.Element | string => {
     if (value === null || value === undefined) {
-      return <span className="null-value">null</span>;
+      return editing ? (
+        <input
+          className="table-input"
+          value=""
+          placeholder="null"
+          onChange={(e) => onValueChange(path, e.target.value || null)}
+        />
+      ) : (
+        <span className="null-value">null</span>
+      );
     }
     
     if (typeof value === 'boolean') {
-      return <span className="boolean-value">{value.toString()}</span>;
+      return editing ? (
+        <select
+          className="table-input"
+          value={value ? 'true' : 'false'}
+          onChange={(e) => onValueChange(path, e.target.value === 'true')}
+        >
+          <option value="true">true</option>
+          <option value="false">false</option>
+        </select>
+      ) : (
+        <span className="boolean-value">{value.toString()}</span>
+      );
     }
     
     if (typeof value === 'number') {
-      return <span className="number-value">{value}</span>;
+      return editing ? (
+        <input
+          className="table-input"
+          value={value}
+          onChange={(e) => {
+            const next = Number(e.target.value);
+            onValueChange(path, Number.isNaN(next) ? e.target.value : next);
+          }}
+        />
+      ) : (
+        <span className="number-value">{value}</span>
+      );
     }
     
     if (typeof value === 'string') {
-      return <span className="string-value">{value}</span>;
+      return editing ? (
+        <textarea
+          className="table-input"
+          value={value}
+          onChange={(e) => onValueChange(path, e.target.value)}
+        />
+      ) : (
+        <span className="string-value">{value}</span>
+      );
     }
     
     if (Array.isArray(value)) {
@@ -383,7 +503,7 @@ function TabularView({ data }: { data: any }) {
           {value.map((item, index) => (
             <div key={index} className="array-item">
               <span className="array-index">[{index}]</span>
-              {renderValue(item, depth + 1)}
+              {renderValue(item, depth + 1, [...path, index])}
             </div>
           ))}
         </div>
@@ -397,7 +517,7 @@ function TabularView({ data }: { data: any }) {
             {Object.entries(value).map(([key, val]) => (
               <tr key={key}>
                 <td className="table-key">{key}:</td>
-                <td className="table-value">{renderValue(val, depth + 1)}</td>
+                <td className="table-value">{renderValue(val, depth + 1, [...path, key])}</td>
               </tr>
             ))}
           </tbody>
@@ -421,7 +541,7 @@ function TabularView({ data }: { data: any }) {
           {Object.entries(data).map(([key, value]) => (
             <tr key={key}>
               <td className="field-name">{key}</td>
-              <td className="field-value">{renderValue(value)}</td>
+              <td className="field-value">{renderValue(value, 0, [key])}</td>
             </tr>
           ))}
         </tbody>
@@ -431,4 +551,20 @@ function TabularView({ data }: { data: any }) {
 }
 
 export default ExtractionViewer;
+
+function setNestedValue(source: any, path: (string | number)[], value: any) {
+  if (!path.length) return value;
+
+  const [head, ...rest] = path;
+  const base =
+    source !== undefined && source !== null
+      ? source
+      : typeof head === 'number'
+      ? []
+      : {};
+
+  const clone = Array.isArray(base) ? [...base] : { ...base };
+  clone[head as any] = rest.length ? setNestedValue(clone[head as any], rest, value) : value;
+  return clone;
+}
 

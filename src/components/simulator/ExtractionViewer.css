@@ -118,6 +118,51 @@
   background: rgba(236, 171, 35, 0.3);
 }
 
+.edit-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  gap: 12px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  color: #00E5FF;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: rgba(0, 229, 255, 0.25);
+}
+
+.edit-btn.primary {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #22C55E;
+}
+
+.edit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.edit-error {
+  color: #ff6b6b;
+  font-size: 12px;
+}
+
 .pdf-container,
 .json-container {
   flex: 1;
@@ -134,6 +179,20 @@
 
 .json-container {
   padding: 16px;
+}
+
+.json-editor {
+  width: 100%;
+  min-height: 320px;
+  background: #0B0F14;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #E6EAF2;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 16px;
+  resize: vertical;
 }
 
 .json-content {
@@ -227,6 +286,18 @@
 .field-value {
   color: #E6EAF2;
   word-break: break-word;
+}
+
+.table-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  color: #E6EAF2;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
 }
 
 .nested-table {
