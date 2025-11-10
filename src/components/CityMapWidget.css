@@ -68,8 +68,9 @@
   flex: 1;
   min-height: 450px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100%;
 }
 
 .city-list {

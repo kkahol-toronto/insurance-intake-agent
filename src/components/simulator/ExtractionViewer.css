@@ -286,6 +286,11 @@
 .field-value {
   color: #E6EAF2;
   word-break: break-word;
+  min-width: 260px;
+}
+
+.field-value .nested-table {
+  min-width: 320px;
 }
 
 .table-input {
@@ -303,10 +308,12 @@
 .nested-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   margin: 8px 0;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   overflow: hidden;
+  min-width: 320px;
 }
 
 .nested-table td {
@@ -317,12 +324,14 @@
 .table-key {
   font-weight: 500;
   color: #00E5FF;
-  width: 150px;
-  min-width: 150px;
+  width: 180px;
+  min-width: 180px;
 }
 
 .table-value {
   color: #E6EAF2;
+  word-break: normal;
+  white-space: pre-wrap;
 }
 
 .array-container {
@@ -336,7 +345,8 @@
   border-radius: 4px;
   display: flex;
   gap: 8px;
-  align-items: flex-start;
+  align-items: stretch;
+  min-width: 100%;
 }
 
 .array-index {
@@ -345,12 +355,24 @@
   min-width: 40px;
 }
 
+.array-item .nested-table,
+.array-item .table-value,
+.array-item .array-container {
+  flex: 1 1 auto;
+}
+
+.array-item .table-value {
+  min-width: 220px;
+}
+
 .string-value {
   color: #22C55E;
+  white-space: nowrap;
 }
 
 .number-value {
   color: #00E5FF;
+  white-space: nowrap;
 }
 
 .boolean-value {

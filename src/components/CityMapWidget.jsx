@@ -51,6 +51,8 @@ function CityMapWidget({ cityData, claims }) {
         <GeographicHeatMap 
           cityData={cityData} 
           selectedView={selectedView}
+          selectedCity={selectedCity}
+          onCitySelect={handleCityClick}
         />
       </div>
 

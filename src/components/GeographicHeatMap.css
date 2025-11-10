@@ -11,117 +11,95 @@
   width: 100%;
   background: white;
   border-radius: 12px;
-  padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-height: 600px;
+  overflow: hidden;
 }
 
-.city-tooltip {
-  position: absolute;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  padding: 16px;
-  z-index: 1000;
-  min-width: 280px;
-  max-width: 320px;
-  border: 2px solid #ECAB23;
-  pointer-events: none;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: fadeIn 0.2s ease-in;
+.map-wrapper .claims-map {
+  width: 100%;
+  height: 520px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
+.leaflet-container {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
 }
 
-.tooltip-header {
-  margin-bottom: 12px;
-}
-
-.tooltip-header h3 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0E3846;
-  margin: 0 0 8px 0;
-}
-
-.tooltip-stats {
-  display: flex;
-  gap: 16px;
-}
-
-.tooltip-stat {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-label {
-  font-size: 12px;
+.leaflet-control-attribution {
+  font-size: 11px;
   color: #666;
 }
 
-.stat-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: #003946;
+.city-tooltip-card {
+  background: #0E3846;
+  color: #ffffff;
+  border-radius: 10px;
+  border: none;
+  padding: 12px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
-.tooltip-chart {
-  margin: 12px 0;
-  height: 120px;
-  overflow: visible;
-  padding: 0 10px;
+.city-tooltip-card::before {
+  border-top-color: #0E3846 !important;
 }
 
-.tooltip-breakdown {
+.tooltip-content {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e9ecef;
 }
 
-.breakdown-item {
+.tooltip-heading {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-heading strong {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.tooltip-total {
   font-size: 13px;
-  color: #003946;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.breakdown-dot {
-  width: 12px;
-  height: 12px;
+.tooltip-total span {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.tooltip-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.tooltip-metrics .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
+  margin-right: 6px;
 }
 
-.breakdown-dot.accepted {
-  background-color: #28a745;
+.tooltip-metrics .dot.accepted {
+  background: #28a745;
 }
 
-.breakdown-dot.pending {
-  background-color: #ECAB23;
+.tooltip-metrics .dot.pending {
+  background: #ECAB23;
 }
 
-.breakdown-dot.denied {
-  background-color: #dc3545;
+.tooltip-metrics .dot.denied {
+  background: #dc3545;
 }
 
 .heatmap-legend {
   padding: 16px;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid #e9ecef;
 }
 
@@ -129,23 +107,19 @@
   font-size: 16px;
   font-weight: 600;
   color: #0E3846;
-  margin-bottom: 12px;
-}
-
-.legend-explanation {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .legend-explanation p {
   font-size: 13px;
   color: #666;
-  margin: 0;
+  margin: 0 0 12px 0;
   line-height: 1.5;
 }
 
 .legend-items {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
@@ -158,20 +132,8 @@
 }
 
 .legend-dot {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-}
-
-.legend-dot.accepted {
-  background-color: #28a745;
-}
-
-.legend-dot.pending {
-  background-color: #ECAB23;
-}
-
-.legend-dot.denied {
-  background-color: #dc3545;
 }
 
