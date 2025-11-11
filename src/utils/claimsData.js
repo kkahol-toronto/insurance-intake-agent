@@ -192,6 +192,117 @@ const externalScenario1Claim = {
   }
 }
 
+const bandyMorrisClaim = {
+  claim_id: '2024160967595412',
+  patient_name: 'Bandy Morris',
+  policy_number: '002101',
+  member_id: '21332120',
+  provider: 'Radiology Ten30',
+  service: 'MRI Lumbar Spine (8576L)',
+  service_date: '2024-09-16',
+  province: 'QC',
+  provider_postal_code: 'J4Y 0E2',
+  provider_specialty: 'Laboratory/Diagnostic Services',
+  referring_physician: 'Dr. Pam Shrivatsa',
+  total_amount: 735.0,
+  currency: 'CAD',
+  ProviderInformation: {
+    FacilityName: 'Radiology Ten30',
+    Address: {
+      Line1: 'Brossard, QC',
+      Province: 'QC',
+      PostalCode: 'J4Y 0E2'
+    }
+  },
+  Invoice: {
+    Address: 'Brossard, QC J4Y 0E2',
+    FileNumber: '2024160967595412',
+    Service: 'MRI Lumbar Spine (8576L)'
+  },
+  status_flow: [
+    {
+      stage: 1,
+      name: 'Data Extraction',
+      status_message: 'Claim PDF uploaded — extracting patient and provider details from the document.'
+    },
+    {
+      stage: 2,
+      name: 'Claim Identification',
+      status_message: 'Claim 2024160967595412 identified for claimant Bandy Morris under policy 002101.'
+    },
+    {
+      stage: 3,
+      name: 'Claim Found?',
+      status_message: 'Existing pended claim located in CHESS system (reason: Unspecified Service).'
+    },
+    {
+      stage: 4,
+      name: 'Policy Check',
+      status_message: 'Policy verified as active — no coordination of benefits (COB: N).'
+    },
+    {
+      stage: 5,
+      name: 'Identify Pend Type',
+      status_message: 'Pend category determined: Missing supporting document (e.g., referral or diagnostic note).'
+    },
+    {
+      stage: 6,
+      name: 'Provider Verification',
+      status_message: "Provider 'Radiology Ten30' validated — diagnostic radiology facility, license ID 004321600 (QC)."
+    },
+    {
+      stage: 7,
+      name: 'Address & Document Validation',
+      status_message: 'Provider location (QC, J4Y 0E2) and contact verified with facility records.'
+    },
+    {
+      stage: 8,
+      name: 'Information Found?',
+      status_message: "Referral text 'Ref: Dr. Pam Shrivatsa' detected within the claim document."
+    },
+    {
+      stage: 9,
+      name: 'Document Review',
+      status_message: 'Referral verified and correctly associated with MRI Lumbar Spine (8576L) service.'
+    },
+    {
+      stage: 10,
+      name: 'Related Note Found?',
+      status_message: 'Linked note and medical record validated; data consistency confirmed.'
+    },
+    {
+      stage: 11,
+      name: 'Translation & Extraction',
+      status_message: 'Standardized diagnostic and referral details prepared for policy validation pipeline.'
+    },
+    {
+      stage: 12,
+      name: 'Policy Validation Branch',
+      status_message: 'Radiology claim amount $735 < $1000 threshold — meets criteria for automatic approval.'
+    },
+    {
+      stage: 13,
+      name: 'Letter Generation',
+      status_message: 'Approval communication generated for claimant Bandy Morris.'
+    },
+    {
+      stage: 14,
+      name: 'Update CHESS',
+      status_message: 'CHESS status updated — claim moved from PENDED to APPROVED.'
+    },
+    {
+      stage: 15,
+      name: 'Outcome',
+      status_message: 'Claim approved and reimbursement of $735.00 scheduled to the claimant’s bank account.'
+    }
+  ],
+  final_decision: {
+    status: 'Approved',
+    reason: 'CHESS initially pended claim due to missing referral. Referral found within document (Dr. Pam Shrivatsa). Amount under $1000 radiology threshold — auto-approved.',
+    approved_amount: 735
+  }
+}
+
 // Generate additional mock claims based on the patterns
 const generateMockClaim = (baseData, variations) => {
   const cities = ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Ottawa', 'Edmonton', 'Winnipeg', 'Quebec City', 'Hamilton', 'Kitchener']
@@ -245,6 +356,23 @@ export const generateClaimsData = () => {
     procedureCount: 1,
     integrationType: 'CHESS',
     rawData: externalScenario1Claim
+  })
+  claims.push({
+    id: 'CLM-BANDY-MORRIS-20251109',
+    claimNumber: '2024160967595412',
+    patientName: 'BANDY MORRIS',
+    memberId: '21332120',
+    city: 'Brossard',
+    province: 'QC',
+    status: 'pending',
+    amount: 735,
+    currency: 'CAD',
+    submittedDate: '2024-09-16',
+    processedDate: null,
+    dentist: 'Radiology Ten30',
+    procedureCount: 1,
+    integrationType: 'CHESS',
+    rawData: bandyMorrisClaim
   })
   claims.push({
     id: 'CLM-EMMA-LAMBERT-20251102',

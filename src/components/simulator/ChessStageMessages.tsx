@@ -27,6 +27,10 @@ type ChessStageContext = {
   facilityId: string;
   tpCode: string;
   referralDoctor: string;
+  totalAmount: string;
+  currency: string;
+  finalDecisionStatus: string;
+  finalDecisionReason: string;
 };
 
 type ChessStageConfig = {
@@ -97,7 +101,14 @@ const buildContext = (claim?: ClaimInfo): ChessStageContext => {
     facilityAddress,
     facilityId: fallback(expense.FacilityId, providerInfo.GenericID || 'facility id'),
     tpCode: tpCode || 'TP reference',
-    referralDoctor
+    referralDoctor,
+    totalAmount: (() => {
+      const amount = raw.total_amount ?? expense.ClaimAmount ?? 0;
+      return typeof amount === 'number' ? amount.toFixed(2) : String(amount || '0.00');
+    })(),
+    currency: raw.currency || expense.Currency || 'CAD',
+    finalDecisionStatus: raw.final_decision?.status || 'resolved',
+    finalDecisionReason: raw.final_decision?.reason || 'Final decision recorded.'
   };
 };
 
@@ -287,6 +298,110 @@ const chessStageConfig: Record<string, ChessStageConfig> = {
 
 export const chessStageIds = Object.keys(chessStageConfig);
 
+type StageOverride = Partial<Omit<ChessStageConfig, 'getMessages'>> & {
+  getMessages?: (context: ChessStageContext) => string[];
+};
+
+const claimStageOverrides: Record<string, Record<string, StageOverride>> = {
+  '2024160967595412': {
+    stage1: {
+      getMessages: () => [
+        '🟩 Stage 1 – Data Extraction',
+        'Claim PDF uploaded — extracting patient and provider details from the document.'
+      ]
+    },
+    stage2: {
+      getMessages: (ctx) => [
+        '🟩 Stage 2 – Claim Identification',
+        `Claim ${ctx.claimNumber} identified for claimant ${ctx.patientName} under policy ${ctx.policyNumber}.`
+      ]
+    },
+    stage3: {
+      getMessages: () => [
+        '🟩 Stage 3 – Claim Found?',
+        'Existing pended claim located in CHESS system (reason: Unspecified Service).'
+      ]
+    },
+    stage4: {
+      getMessages: () => [
+        '🟩 Stage 4 – Policy Check',
+        'Policy verified as active — no coordination of benefits (COB: N).'
+      ]
+    },
+    stage5: {
+      getMessages: () => [
+        '🟩 Stage 5 – Identify Pend Type',
+        'Pend category determined: Missing supporting document (e.g., referral or diagnostic note).'
+      ]
+    },
+    stage6: {
+      getMessages: (ctx) => [
+        '🟩 Stage 6 – Provider Verification',
+        `Provider “${ctx.providerName}” validated — diagnostic radiology facility, license ID 004321600 (QC).`
+      ]
+    },
+    stage7: {
+      getMessages: () => [
+        '🟩 Stage 7 – Address & Document Validation',
+        'Provider location (QC, J4Y 0E2) and contact verified with facility records.'
+      ],
+      completionLog: (ctx) => `QC facility verification completed for ${ctx.providerName}.`
+    },
+    stage8: {
+      getMessages: () => [
+        '🟩 Stage 8 – Information Found?',
+        "Referral text “Ref: Dr. Pam Shrivatsa” detected within the claim document."
+      ]
+    },
+    stage9: {
+      getMessages: () => [
+        '🟩 Stage 9 – Document Review',
+        'Referral verified and correctly associated with MRI Lumbar Spine (8576L) service.'
+      ]
+    },
+    stage10: {
+      getMessages: () => [
+        '🟩 Stage 10 – Related Note Found?',
+        'Linked note and medical record validated; data consistency confirmed.'
+      ]
+    },
+    stage11: {
+      getMessages: () => [
+        '🟩 Stage 11 – Translation & Extraction',
+        'Standardized diagnostic and referral details prepared for policy validation pipeline.'
+      ]
+    },
+    stage12: {
+      getMessages: (ctx) => [
+        '🟩 Stage 12 – Policy Validation Branch',
+        `Radiology claim amount $${ctx.totalAmount} < $1000 threshold — meets criteria for automatic approval.`
+      ],
+      completionLog: (ctx) => `Policy approval threshold met for $${ctx.totalAmount} ${ctx.currency}.`
+    },
+    stage13: {
+      getMessages: (ctx) => [
+        '🟩 Stage 13 – Letter Generation',
+        `Approval communication generated for claimant ${ctx.patientName}.`
+      ]
+    },
+    stage14: {
+      getMessages: (ctx) => [
+        '🟩 Stage 14 – Update CHESS',
+        `CHESS status updated — claim moved from PENDED to APPROVED for dossier ${ctx.dossierNumber}.`
+      ],
+      completionLog: (ctx) => `CHESS record ${ctx.dossierNumber} set to APPROVED.`
+    },
+    stage15: {
+      getMessages: (ctx) => [
+        '🟩 Stage 15 – Outcomes',
+        `Claim approved and reimbursement of $${ctx.totalAmount} scheduled to the claimant’s bank account.`,
+        `Reason: ${ctx.finalDecisionReason}`
+      ],
+      completionLog: (ctx) => `Final outcome recorded: ${ctx.finalDecisionStatus} for $${ctx.totalAmount} ${ctx.currency}.`
+    }
+  }
+};
+
 type ChessStageMessagesProps = {
   stageId: string;
   isActive: boolean;
@@ -312,8 +427,29 @@ function ChessStageMessages({ stageId, isActive, claim }: ChessStageMessagesProp
   const completionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const loggedIndexesRef = useRef<Set<number>>(new Set());
 
-  const config = chessStageConfig[stageId];
+  const baseConfig = chessStageConfig[stageId];
   const context = useMemo(() => buildContext(claim), [claim]);
+  const claimIdentifier = useMemo(() => {
+    if (!claim) return '';
+    return (claim.claimNumber || claim.patientName || '').toString().toUpperCase();
+  }, [claim]);
+  const stageOverride = claimIdentifier ? claimStageOverrides[claimIdentifier]?.[stageId] : undefined;
+  const config = useMemo(() => {
+    if (!baseConfig && !stageOverride) {
+      return null;
+    }
+    if (!stageOverride) {
+      return baseConfig;
+    }
+    const merged: ChessStageConfig = {
+      title: baseConfig?.title ?? `Stage ${stageId}`,
+      getMessages: stageOverride.getMessages ?? baseConfig?.getMessages ?? (() => []),
+      delays: stageOverride.delays ?? baseConfig?.delays,
+      doneDelay: stageOverride.doneDelay ?? baseConfig?.doneDelay,
+      completionLog: stageOverride.completionLog ?? baseConfig?.completionLog
+    };
+    return merged;
+  }, [baseConfig, stageId, stageOverride]);
 
   const messages = chessStageMessages[stageId] || [];
   const currentIndex = chessStageMessageIndex[stageId] ?? -1;
