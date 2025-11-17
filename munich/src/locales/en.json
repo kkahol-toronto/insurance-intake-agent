@@ -1,0 +1,36 @@
+{
+  "login": {
+    "title": "Munich Re FNOL Portal",
+    "username": "Username",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "loginButton": "Login",
+    "error": "Invalid username or password"
+  },
+  "dashboard": {
+    "title": "FNOL Processing Dashboard",
+    "totalCases": "Total Cases",
+    "acceptedCases": "Accepted",
+    "rejectedCases": "Rejected",
+    "pendingCases": "Pending",
+    "geographicalDistribution": "Geographical Distribution",
+    "fnolTable": "First Notice of Loss (FNOL) Processing",
+    "caseNumber": "Case #",
+    "claimId": "Claim ID",
+    "reportedBy": "Reported By",
+    "reporterRole": "Reporter Role",
+    "insuredName": "Insured Name",
+    "policyNumber": "Policy Number",
+    "dateOfLoss": "Date of Loss",
+    "city": "City",
+    "state": "State",
+    "status": "Status",
+    "outcome": "Outcome",
+    "viewDetails": "View Details",
+    "allStatuses": "All Statuses",
+    "searchPlaceholder": "Search cases...",
+    "showing": "Showing {{count}} of {{total}} cases",
+    "noResults": "No cases found"
+  }
+}
+

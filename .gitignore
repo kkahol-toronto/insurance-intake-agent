@@ -41,6 +41,7 @@ backend/venv/
 backend/env/
 backend/ENV/
 backend/.env
+backend/data/event_logs/
 
 # Build outputs
 build

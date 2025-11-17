@@ -1,0 +1,166 @@
+{
+    "claimId": "FNOL-CP-401-2345-TSC",
+    "status": "Processing Complete – Claim Accepted (Covered Peril: Water Damage)",
+    "logs": [
+      {
+        "stepNumber": 1,
+        "stageName": "FNOL Ingestion",
+        "agent": "IntakeOrchestrator",
+        "messageType": "success",
+        "message": "FNOL received via MGA Portal. Metadata extracted: submitter=Robert Miller (MGA), timestamp=2025-07-22T10:04:55Z, policy=CP-401-2345.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 2,
+        "stageName": "Metadata Extraction",
+        "agent": "MetadataExtractor",
+        "messageType": "success",
+        "message": "Parsed structured fields for water damage event at Tech Solutions Corp. Loss cause identified as burst pipe.",
+        "confidenceScore": 0.96
+      },
+      {
+        "stepNumber": 3,
+        "stageName": "Document Classification",
+        "agent": "DocumentClassifier",
+        "messageType": "info",
+        "message": "Identified uploaded maintenance ticket and preliminary incident notes. No photos or third-party reports included."
+      },
+      {
+        "stepNumber": 4,
+        "stageName": "Address Normalization",
+        "agent": "GeoNormalizer",
+        "messageType": "success",
+        "message": "Loss location normalized: 2500 Sunset Blvd, Los Angeles, CA 90026. Noted discrepancy with insured's HQ location.",
+        "flags": ["multiLocationInsured"],
+        "confidenceScore": 0.95
+      },
+      {
+        "stepNumber": 5,
+        "stageName": "Deduplication Check",
+        "agent": "DuplicateDetector",
+        "messageType": "success",
+        "message": "No duplicate FNOLs or existing claims found for this incident.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 6,
+        "stageName": "Policy Retrieval",
+        "agent": "PolicyEngine",
+        "messageType": "success",
+        "message": "Policy CP-401-2345 retrieved. Multi-location coverage confirmed. Water damage from sudden burst pipe is included.",
+        "confidenceScore": 0.98
+      },
+      {
+        "stepNumber": 7,
+        "stageName": "Coverage Matching",
+        "agent": "CoverageAI",
+        "messageType": "success",
+        "message": "Matched peril: Water Damage (Sudden/Accidental). No exclusions triggered. Branch office address covered under policy rider ML-EXT-17.",
+        "confidenceScore": 0.94
+      },
+      {
+        "stepNumber": 8,
+        "stageName": "Premium Check",
+        "agent": "BillingValidator",
+        "messageType": "success",
+        "message": "Premiums fully paid. No cancellations, lapses, or reinstatements.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 9,
+        "stageName": "Coverage Integrity Score",
+        "agent": "CoverageScoringAgent",
+        "messageType": "success",
+        "message": "Coverage integrity score: 91%. Strong alignment of covered peril and insured location extension.",
+        "confidenceScore": 0.91
+      },
+      {
+        "stepNumber": 10,
+        "stageName": "Severity Scoring",
+        "agent": "SeverityModel",
+        "messageType": "success",
+        "message": "Loss categorized as Major ($250K–$5M) due to server room involvement and electronics exposure.",
+        "confidenceScore": 0.87
+      },
+      {
+        "stepNumber": 11,
+        "stageName": "Fraud/Anomaly Check",
+        "agent": "FraudDetector",
+        "messageType": "success",
+        "message": "No fraud markers identified. Plumbing maintenance logs confirm prior pipe integrity issues.",
+        "confidenceScore": 0.92
+      },
+      {
+        "stepNumber": 12,
+        "stageName": "Inspection Recommendation",
+        "agent": "InspectionRecommender",
+        "messageType": "info",
+        "message": "Field adjuster inspection recommended due to sensitive equipment damage. No CAT involvement.",
+        "confidenceScore": 0.86
+      },
+      {
+        "stepNumber": 13,
+        "stageName": "Evidence Collection",
+        "agent": "EvidenceCollector",
+        "messageType": "info",
+        "message": "Requested repair estimates, server diagnostics, moisture readings, and vendor quotes for cleanup services."
+      },
+      {
+        "stepNumber": 14,
+        "stageName": "Revalidation",
+        "agent": "RevalidationAgent",
+        "messageType": "success",
+        "message": "Revalidated cause of loss. Burst pipe confirmed. Loss location properly associated with policy extension.",
+        "confidenceScore": 0.93
+      },
+      {
+        "stepNumber": 15,
+        "stageName": "Property Damage Estimation",
+        "agent": "DamageEstimator",
+        "messageType": "success",
+        "message": "Preliminary estimate: $310,000 including server hardware replacements and structural drying/remediation.",
+        "confidenceScore": 0.89
+      },
+      {
+        "stepNumber": 16,
+        "stageName": "Reserve Estimation",
+        "agent": "ReserveModel",
+        "messageType": "success",
+        "message": "Initial reserve set at $330,000 including contingency for electronics testing and replacement.",
+        "confidenceScore": 0.90
+      },
+      {
+        "stepNumber": 17,
+        "stageName": "Managerial Escalation & Approval",
+        "agent": "ApprovalRouter",
+        "messageType": "info",
+        "message": "Reserve exceeds adjuster authority. Senior Adjuster approval obtained. No anomalies flagged.",
+        "escalationRequired": true
+      },
+      {
+        "stepNumber": 18,
+        "stageName": "Coverage Determination",
+        "agent": "CoverageAI",
+        "messageType": "success",
+        "message": "Final determination: Fully covered claim. Water damage validated and linked to sudden accidental pipe burst.",
+        "confidenceScore": 0.97
+      },
+      {
+        "stepNumber": 19,
+        "stageName": "Payment Preparation",
+        "agent": "SettlementEngine",
+        "messageType": "info",
+        "message": "Preparing settlement options: Replacement Cost Value + Direct Pay to certified remediation vendor.",
+        "confidenceScore": 0.90
+      },
+      {
+        "stepNumber": 20,
+        "stageName": "Final Outcome",
+        "agent": "ClaimOrchestrator",
+        "messageType": "success",
+        "message": "Claim FNOL-CP-401-2345-TSC ACCEPTED. MGA and insured notified. Claim routed to settlement operations.",
+        "confidenceScore": 0.99
+      }
+    ]
+  }
+  

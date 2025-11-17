@@ -1,0 +1,7 @@
+Scenario: A Managing General Agent (MGA) reports a water damage loss on behalf of the insured. Robert Miller (the MGA representative) files the FNOL for Tech Solutions Corp. after a pipe burst at one of the insured’s locations. In this case, the insured’s main office is in San Francisco, but the loss occurred at a branch office in Los Angeles – demonstrating a scenario where the loss location differs from the mailing address on the policy. All details (including the separate loss location) are provided, and the cause (burst pipe causing water damage) is covered by the policy. The claim is accepted for processing.
+•	Reporter Role: MGA (reporting on behalf of the insured company). sameAsReportedBy is false since the MGA is an external party and not the insured.
+•	Insured Contact: Daniel Chen (Tech Solutions’ representative) is listed with the company’s main office address in San Francisco.
+•	Loss Cause: Burst plumbing pipe leading to water damage (a covered peril).
+•	Loss Location: Different from the insured’s mailing address – the incident happened at the Los Angeles branch office while the insured’s address on the policy is the San Francisco headquarters.
+•	Authorities Notified: No, this was not an emergency requiring police or fire department (a repair crew handled the burst pipe).
+•	Outcome: The FNOL is accepted. The claim is opened and assigned for handling since the loss is within coverage and all necessary information was correctly provided by the MGA.

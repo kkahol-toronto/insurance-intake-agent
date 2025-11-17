@@ -1,0 +1,165 @@
+{
+    "claimId": "FNOL-CP-101-0001-JM",
+    "status": "Processing Complete – Claim Accepted",
+    "logs": [
+      {
+        "stepNumber": 1,
+        "stageName": "FNOL Ingestion",
+        "agent": "IntakeOrchestrator",
+        "messageType": "success",
+        "message": "FNOL received via Broker Portal. Metadata extracted: submitter=Joe Miller, timestamp=2025-09-01T09:22:10Z, policy=CP-101-0001.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 2,
+        "stageName": "Metadata Extraction",
+        "agent": "MetadataExtractor",
+        "messageType": "success",
+        "message": "Loss description, policy number, insured entity, and contact details successfully parsed.",
+        "confidenceScore": 0.97
+      },
+      {
+        "stepNumber": 3,
+        "stageName": "Document Classification",
+        "agent": "DocumentClassifier",
+        "messageType": "info",
+        "message": "Identified fire department incident note and two uploaded photos of fire damage. No invoices submitted yet."
+      },
+      {
+        "stepNumber": 4,
+        "stageName": "Address Normalization",
+        "agent": "GeoNormalizer",
+        "messageType": "success",
+        "message": "Address normalized and geocoded: 15 E 10th St, New York, NY 10003.",
+        "confidenceScore": 0.94
+      },
+      {
+        "stepNumber": 5,
+        "stageName": "Deduplication Check",
+        "agent": "DuplicateDetector",
+        "messageType": "success",
+        "message": "No existing open claims or FNOL records match this incident.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 6,
+        "stageName": "Policy Retrieval",
+        "agent": "PolicyEngine",
+        "messageType": "success",
+        "message": "Policy CP-101-0001 retrieved. Active status confirmed. Deductible=$5,000. Fire peril covered.",
+        "confidenceScore": 0.98
+      },
+      {
+        "stepNumber": 7,
+        "stageName": "Coverage Matching",
+        "agent": "CoverageAI",
+        "messageType": "success",
+        "message": "Loss description matches covered peril: Fire. No exclusions triggered.",
+        "confidenceScore": 0.96
+      },
+      {
+        "stepNumber": 8,
+        "stageName": "Premium Check",
+        "agent": "BillingValidator",
+        "messageType": "success",
+        "message": "Premiums paid and current. No lapse or cancellation detected.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 9,
+        "stageName": "Coverage Integrity Score",
+        "agent": "CoverageScoringAgent",
+        "messageType": "success",
+        "message": "Coverage integrity score computed: 92%. No human validation required.",
+        "confidenceScore": 0.92
+      },
+      {
+        "stepNumber": 10,
+        "stageName": "Severity Scoring",
+        "agent": "SeverityModel",
+        "messageType": "success",
+        "message": "Estimated loss severity categorized as: Major Loss ($250K–$5M).",
+        "confidenceScore": 0.88
+      },
+      {
+        "stepNumber": 11,
+        "stageName": "Fraud/Anomaly Check",
+        "agent": "FraudDetector",
+        "messageType": "success",
+        "message": "No fraud indicators detected. Photos align with location metadata and fire department logs.",
+        "confidenceScore": 0.95
+      },
+      {
+        "stepNumber": 12,
+        "stageName": "Inspection Decisioning",
+        "agent": "InspectionRecommender",
+        "messageType": "info",
+        "message": "Field adjuster recommended due to structural damage potential. Drone inspection optional.",
+        "confidenceScore": 0.87
+      },
+      {
+        "stepNumber": 13,
+        "stageName": "Evidence Collection",
+        "agent": "EvidenceCollector",
+        "messageType": "info",
+        "message": "Requested contractor estimates and inventory damage list from insured."
+      },
+      {
+        "stepNumber": 14,
+        "stageName": "Revalidation",
+        "agent": "RevalidationAgent",
+        "messageType": "success",
+        "message": "Loss description, policy triggers, and address validated. No inconsistencies found.",
+        "confidenceScore": 0.93
+      },
+      {
+        "stepNumber": 15,
+        "stageName": "Property Damage Estimation",
+        "agent": "DamageEstimator",
+        "messageType": "success",
+        "message": "Structural + inventory damage preliminarily estimated at $410,000.",
+        "confidenceScore": 0.88
+      },
+      {
+        "stepNumber": 16,
+        "stageName": "Reserve Estimation",
+        "agent": "ReserveModel",
+        "messageType": "success",
+        "message": "Initial reserve set at $420,000 including potential supplemental repair costs.",
+        "confidenceScore": 0.91
+      },
+      {
+        "stepNumber": 17,
+        "stageName": "Managerial Escalation & Approval",
+        "agent": "ApprovalRouter",
+        "messageType": "info",
+        "message": "Reserve amount exceeds adjuster authority. Forwarded to Senior Adjuster for approval.",
+        "escalationRequired": true
+      },
+      {
+        "stepNumber": 18,
+        "stageName": "Coverage Determination",
+        "agent": "CoverageAI",
+        "messageType": "success",
+        "message": "Final determination: Fully covered claim. Fire loss confirmed under policy terms.",
+        "confidenceScore": 0.97
+      },
+      {
+        "stepNumber": 19,
+        "stageName": "Payment Preparation",
+        "agent": "SettlementEngine",
+        "messageType": "info",
+        "message": "Preparing settlement options: Replacement Cost Value and Partial Advance Payment.",
+        "confidenceScore": 0.89
+      },
+      {
+        "stepNumber": 20,
+        "stageName": "Final Outcome",
+        "agent": "ClaimOrchestrator",
+        "messageType": "success",
+        "message": "Claim FNOL-CP-101-0001-JM accepted and routed to Claims Operations for settlement. Insured notified.",
+        "confidenceScore": 0.99
+      }
+    ]
+  }
+  

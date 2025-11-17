@@ -1,0 +1,36 @@
+{
+  "login": {
+    "title": "Munich Re FNOL Portal",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "rememberMe": "Angemeldet bleiben",
+    "loginButton": "Anmelden",
+    "error": "Ungültiger Benutzername oder Passwort"
+  },
+  "dashboard": {
+    "title": "FNOL-Verarbeitungs-Dashboard",
+    "totalCases": "Gesamtfälle",
+    "acceptedCases": "Akzeptiert",
+    "rejectedCases": "Abgelehnt",
+    "pendingCases": "Ausstehend",
+    "geographicalDistribution": "Geografische Verteilung",
+    "fnolTable": "Erste Schadensmeldung (FNOL) Verarbeitung",
+    "caseNumber": "Fall #",
+    "claimId": "Schadens-ID",
+    "reportedBy": "Gemeldet von",
+    "reporterRole": "Melderrolle",
+    "insuredName": "Versicherter Name",
+    "policyNumber": "Richtliniennummer",
+    "dateOfLoss": "Schadensdatum",
+    "city": "Stadt",
+    "state": "Bundesstaat",
+    "status": "Status",
+    "outcome": "Ergebnis",
+    "viewDetails": "Details anzeigen",
+    "allStatuses": "Alle Status",
+    "searchPlaceholder": "Fälle suchen...",
+    "showing": "Zeige {{count}} von {{total}} Fällen",
+    "noResults": "Keine Fälle gefunden"
+  }
+}
+

@@ -1,0 +1,70 @@
+{
+    "reportedBy": {
+      "roleInRelationToLoss": "Insured",
+      "title": "Ms.",
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "phone": "305-555-1234",
+      "email": "alice.johnson@sunshinebakery.com",
+      "address": {
+        "addressLine1": "200 Biscayne Blvd",
+        "addressLine2": "",
+        "city": "Miami",
+        "stateProvince": "FL",
+        "country": "United States",
+        "zipPostalCode": "33131"
+      }
+    },
+    "policyInformation": {
+      "sameAsReportedBy": true,
+      "policyNumber": "CP-201-4567",
+      "insuredName": "Sunshine Bakery LLC",
+      "contactFirstName": "Alice",
+      "contactLastName": "Johnson",
+      "phone": "305-555-1234",
+      "email": "alice.johnson@sunshinebakery.com",
+      "address": {
+        "addressLine1": "200 Biscayne Blvd",
+        "addressLine2": "",
+        "city": "Miami",
+        "stateProvince": "FL",
+        "country": "United States",
+        "zipPostalCode": "33131"
+      }
+    },
+    "claimants": [
+      {
+        "source": "enterNew",
+        "title": "Ms.",
+        "firstName": "Alice",
+        "lastName": "Johnson",
+        "phone": "305-555-1234",
+        "email": "alice.johnson@sunshinebakery.com",
+        "address": {
+          "addressLine1": "200 Biscayne Blvd",
+          "addressLine2": "",
+          "city": "Miami",
+          "stateProvince": "FL",
+          "country": "United States",
+          "zipPostalCode": "33131"
+        }
+      }
+    ],
+    "lossInformation": {
+      "dateOfLoss": "2025-06-30",
+      "lossDescription": "Severe overnight rainstorms caused flooding in the bakery's basement, damaging equipment and supplies.",
+      "lawsuit": false,
+      "lossLocation": {
+        "source": "enterNew",
+        "addressLine1": "200 Biscayne Blvd",
+        "addressLine2": "",
+        "city": "Miami",
+        "stateProvince": "FL",
+        "country": "United States",
+        "zipPostalCode": "33131"
+      },
+      "witnesses": false,
+      "authoritiesNotified": false
+    }
+  }
+  

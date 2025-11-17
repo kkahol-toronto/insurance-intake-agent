@@ -1,0 +1,5 @@
+Scenario: The insured reports a loss caused by flooding at their commercial property. Alice Johnson, owner of “Sunshine Bakery LLC,” files a claim for flood damage after heavy rains. All information is provided correctly, but flooding is excluded under her standard property insurance policy (no flood coverage was in place). The FNOL is recorded, but the claim is ultimately rejected/denied because the cause of loss is not covered by the policy.
+•	Reporter Role: Insured (business owner reporting the loss).
+•	Loss Cause: Flooding from severe rain (which is not covered under the basic policy).
+•	Authorities Notified: No, this was a natural event with no emergency responders called.
+•	Outcome: The claim is not covered and is rejected by the insurer. (The FNOL is captured in the system, but the claim will be closed as not covered.)

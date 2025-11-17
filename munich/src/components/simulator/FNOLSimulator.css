@@ -1,0 +1,150 @@
+:root {
+  --munich-bg: #0a0f1a;
+  --munich-card: #1a1f3a;
+  --munich-text: #ffffff;
+  --munich-mustard: #D4AF37;
+  --munich-navy: #0a0f1a;
+}
+
+.fnol-simulator {
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  background: var(--munich-bg);
+  color: var(--munich-text);
+  position: relative;
+  overflow: visible;
+}
+
+.simulator-flow {
+  background: var(--munich-bg);
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+}
+
+.simulator-flow .react-flow__container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.simulator-flow .react-flow__renderer {
+  width: 100%;
+  height: 100%;
+}
+
+.simulator-flow .react-flow__viewport {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.simulator-flow .react-flow__viewport:active {
+  cursor: grabbing;
+}
+
+.react-flow__edge {
+  cursor: pointer;
+  pointer-events: visibleStroke;
+}
+
+.react-flow__edge-path {
+  stroke: #D4AF37 !important;
+  stroke-width: 3px !important;
+  fill: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transition: stroke 0.3s ease;
+  pointer-events: stroke !important;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #D4AF37 !important;
+  stroke-width: 4px !important;
+}
+
+/* Edge styling - simplified like SunLife */
+.react-flow__edge {
+  cursor: pointer;
+}
+
+.react-flow__edge-path {
+  stroke: #D4AF37;
+  stroke-width: 2;
+  transition: stroke 0.3s ease;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #D4AF37;
+  stroke-width: 3;
+}
+
+/* Ensure edges are visible */
+.simulator-flow .react-flow__edges {
+  z-index: 1;
+}
+
+.simulator-flow .react-flow__nodes {
+  z-index: 2;
+}
+
+.simulator-header {
+  background: rgba(26, 31, 58, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-content h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.header-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.header-controls button {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-controls button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #D4AF37;
+}
+
+.header-controls button.active {
+  background: #D4AF37;
+  border-color: #D4AF37;
+  color: #0a0f1a;
+}
+
+.simulator-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #ffffff;
+}
+

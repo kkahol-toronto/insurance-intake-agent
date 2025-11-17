@@ -46,6 +46,21 @@ A comprehensive digital intake portal for SunLife Insurance claims processing, b
 - **Bilingual Support**: Full English and French translations
 - **Responsive Design**: Works across desktop and mobile devices
 
+## Munich Re FNOL Portal
+
+A second tenant, built under `munich/`, replicates the SunLife experience for Munich Re's First Notice of Loss (FNOL) operations:
+
+- **Branding & Theme**: Navy, white, and mustard palette with Munich Re logos.
+- **USA Map Widget**: Leaflet-based map that plots FNOL cases by city (Dallas, New York, Miami, etc.) with hover details.
+- **FNOL Table**: Dedicated FNOL case list with CHESS-augmentation tags, searchable columns, and row actions.
+- **FNOL Processing Agent**:
+  - 20-stage FNOL flow rendered with React Flow.
+  - Lock/Unlock layout, auto-layout, zoom/pan, and speed controls.
+  - Stage-specific messaging side panel plus event log.
+  - Debug flow toggle for quick visual validation (two nodes / single edge).
+- **Chat Widget**: Reuses the multi-tenant FastAPI service; sends `client=munich` so prompts/statistics are scoped to FNOL data.
+- **Data Files**: Five FNOL cases live under `munich/cases/` (each with `fnol.json`, `status.json`, `outcome.txt`).
+
 ## Technology Stack
 
 - **Frontend**: React 18 with Vite

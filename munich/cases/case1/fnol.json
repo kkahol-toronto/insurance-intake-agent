@@ -1,0 +1,70 @@
+{
+    "reportedBy": {
+      "roleInRelationToLoss": "Insured",
+      "title": "Mr.",
+      "firstName": "Joe",
+      "lastName": "Miller",
+      "phone": "212-555-0199",
+      "email": "joe.miller@joeshardware.com",
+      "address": {
+        "addressLine1": "15 East 10th Street",
+        "addressLine2": "",
+        "city": "New York",
+        "stateProvince": "NY",
+        "country": "United States",
+        "zipPostalCode": "10003"
+      }
+    },
+    "policyInformation": {
+      "sameAsReportedBy": true,
+      "policyNumber": "CP-101-0001",
+      "insuredName": "Joe’s Hardware Inc.",
+      "contactFirstName": "Joe",
+      "contactLastName": "Miller",
+      "phone": "212-555-0199",
+      "email": "joe.miller@joeshardware.com",
+      "address": {
+        "addressLine1": "15 East 10th Street",
+        "addressLine2": "",
+        "city": "New York",
+        "stateProvince": "NY",
+        "country": "United States",
+        "zipPostalCode": "10003"
+      }
+    },
+    "claimants": [
+      {
+        "source": "enterNew",
+        "title": "Mr.",
+        "firstName": "Joe",
+        "lastName": "Miller",
+        "phone": "212-555-0199",
+        "email": "joe.miller@joeshardware.com",
+        "address": {
+          "addressLine1": "15 East 10th Street",
+          "addressLine2": "",
+          "city": "New York",
+          "stateProvince": "NY",
+          "country": "United States",
+          "zipPostalCode": "10003"
+        }
+      }
+    ],
+    "lossInformation": {
+      "dateOfLoss": "2025-09-01",
+      "lossDescription": "A fire started in the storage area, causing significant damage to inventory and parts of the building.",
+      "lawsuit": false,
+      "lossLocation": {
+        "source": "enterNew",
+        "addressLine1": "15 East 10th Street",
+        "addressLine2": "",
+        "city": "New York",
+        "stateProvince": "NY",
+        "country": "United States",
+        "zipPostalCode": "10003"
+      },
+      "witnesses": false,
+      "authoritiesNotified": true
+    }
+  }
+  

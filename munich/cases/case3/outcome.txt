@@ -1,0 +1,7 @@
+Scenario: An insurance broker files the FNOL on behalf of the insured. In this case, Susan Lee (the broker) reports a theft/vandalism loss for her client, Green Fields Apartments LLC. The apartment building was broken into over the weekend, and property was stolen/vandalized. The broker provides the policy details and the insured’s contact (Mark Thompson). The information is verified and the loss (theft) is covered by the policy, so the claim is accepted. This scenario also shows a case where there were witnesses to the incident and authorities (police) were notified.
+•	Reporter Role: Broker (reporting on behalf of the insured). sameAsReportedBy is false because the reporter is not the insured, so the insured’s contact information is provided separately.
+•	Insured Contact: Mark Thompson (property manager for Green Fields Apartments) is listed as the primary contact for the insured.
+•	Loss Cause: Burglary and vandalism (covered peril under property insurance).
+•	Witnesses: Yes, a resident witnessed suspicious activity and security footage is available ("witnesses": true).
+•	Authorities Notified: Yes, the police were notified and a report was filed.
+•	Outcome: The claim is accepted for processing since the incident is covered and all information (policy number, insured details) was provided correctly by the broker.

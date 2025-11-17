@@ -1,0 +1,165 @@
+{
+    "claimId": "FNOL-CP-999-9999-LI",
+    "status": "Processing Complete – Claim Rejected (Invalid Policy Information)",
+    "logs": [
+      {
+        "stepNumber": 1,
+        "stageName": "FNOL Ingestion",
+        "agent": "IntakeOrchestrator",
+        "messageType": "success",
+        "message": "FNOL received via Email Intake. Metadata extracted: submitter=Henry Adams (Other), timestamp=2025-11-10T13:15:40Z, policy=CP-999-9999.",
+        "confidenceScore": 0.98
+      },
+      {
+        "stepNumber": 2,
+        "stageName": "Metadata Extraction",
+        "agent": "MetadataExtractor",
+        "messageType": "success",
+        "message": "Structured fields parsed. Detected peril: electrical fire. Insured entity listed as Lakeside Inn.",
+        "confidenceScore": 0.97
+      },
+      {
+        "stepNumber": 3,
+        "stageName": "Document Classification",
+        "agent": "DocumentClassifier",
+        "messageType": "info",
+        "message": "Identified fire department incident summary and maintenance log. No invoices or repair estimates included."
+      },
+      {
+        "stepNumber": 4,
+        "stageName": "Address Normalization",
+        "agent": "GeoNormalizer",
+        "messageType": "success",
+        "message": "Address normalized: 654 Lakeview Drive, Dallas, TX 75210.",
+        "confidenceScore": 0.95
+      },
+      {
+        "stepNumber": 5,
+        "stageName": "Deduplication Check",
+        "agent": "DuplicateDetector",
+        "messageType": "success",
+        "message": "No duplicate FNOLs detected for this location/date.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 6,
+        "stageName": "Policy Retrieval",
+        "agent": "PolicyEngine",
+        "messageType": "error",
+        "message": "Policy CP-999-9999 was not found in the system. Unable to validate policyholder information.",
+        "flags": ["invalidPolicyNumber", "haltProcessing"],
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 7,
+        "stageName": "Coverage Matching",
+        "agent": "CoverageAI",
+        "messageType": "error",
+        "message": "Coverage matching skipped. Policy validation failed; no coverage data available.",
+        "flags": ["coverageCheckBlocked"]
+      },
+      {
+        "stepNumber": 8,
+        "stageName": "Premium Check",
+        "agent": "BillingValidator",
+        "messageType": "error",
+        "message": "Premium validation skipped. Policy not found.",
+        "flags": ["noBillingRecord"]
+      },
+      {
+        "stepNumber": 9,
+        "stageName": "Coverage Integrity Score",
+        "agent": "CoverageScoringAgent",
+        "messageType": "warning",
+        "message": "Coverage integrity score cannot be computed due to missing policy record.",
+        "confidenceScore": 0.10
+      },
+      {
+        "stepNumber": 10,
+        "stageName": "Severity Scoring",
+        "agent": "SeverityModel",
+        "messageType": "info",
+        "message": "Severity estimated as Minor (<$25K). Electrical fire contained quickly.",
+        "confidenceScore": 0.84
+      },
+      {
+        "stepNumber": 11,
+        "stageName": "Fraud/Anomaly Check",
+        "agent": "FraudDetector",
+        "messageType": "success",
+        "message": "No fraud indicators. Fire department timestamp aligns with reported event.",
+        "confidenceScore": 0.92
+      },
+      {
+        "stepNumber": 12,
+        "stageName": "Inspection Recommendation",
+        "agent": "InspectionRecommender",
+        "messageType": "info",
+        "message": "Inspection deferred. Claim cannot proceed without valid policy.",
+        "flags": ["inspectionDeferred"]
+      },
+      {
+        "stepNumber": 13,
+        "stageName": "Evidence Collection",
+        "agent": "EvidenceCollector",
+        "messageType": "info",
+        "message": "Document request paused. Policy issue prevents further processing."
+      },
+      {
+        "stepNumber": 14,
+        "stageName": "Revalidation",
+        "agent": "RevalidationAgent",
+        "messageType": "error",
+        "message": "Revalidation halted due to invalid policy information.",
+        "flags": ["haltedFlow"]
+      },
+      {
+        "stepNumber": 15,
+        "stageName": "Property Damage Estimation",
+        "agent": "DamageEstimator",
+        "messageType": "info",
+        "message": "Estimation skipped. Claim not eligible until policy is verified."
+      },
+      {
+        "stepNumber": 16,
+        "stageName": "Reserve Estimation",
+        "agent": "ReserveModel",
+        "messageType": "info",
+        "message": "Reserve not set due to claim ineligibility.",
+        "flags": ["skipReserve"]
+      },
+      {
+        "stepNumber": 17,
+        "stageName": "Managerial Escalation & Approval",
+        "agent": "ApprovalRouter",
+        "messageType": "warning",
+        "message": "Alert sent to underwriting team: manual policy verification required.",
+        "escalationRequired": true
+      },
+      {
+        "stepNumber": 18,
+        "stageName": "Coverage Determination",
+        "agent": "CoverageAI",
+        "messageType": "error",
+        "message": "Coverage determination aborted. Claim cannot be evaluated until policy number is corrected.",
+        "flags": ["policyError", "coverageAborted"]
+      },
+      {
+        "stepNumber": 19,
+        "stageName": "Payment Preparation",
+        "agent": "SettlementEngine",
+        "messageType": "info",
+        "message": "Payment processing skipped. Claim ineligible.",
+        "flags": ["noPayment"]
+      },
+      {
+        "stepNumber": 20,
+        "stageName": "Final Outcome",
+        "agent": "ClaimOrchestrator",
+        "messageType": "error",
+        "message": "Claim FNOL-CP-999-9999-LI REJECTED. Reason: Invalid policy information. Manual verification required before resubmission.",
+        "confidenceScore": 0.99
+      }
+    ]
+  }
+  

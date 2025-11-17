@@ -1,0 +1,6 @@
+/* Munich Re App Styles */
+.app {
+  min-height: 100vh;
+  background-color: var(--munich-navy);
+}
+

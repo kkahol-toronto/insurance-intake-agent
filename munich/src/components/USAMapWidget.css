@@ -1,0 +1,79 @@
+.usa-map-widget {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.widget-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--munich-navy);
+  margin: 0;
+}
+
+.view-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.view-selector button {
+  padding: 6px 12px;
+  border: 1px solid var(--munich-gray-dark);
+  background: var(--munich-white);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--munich-text);
+  transition: all 0.2s;
+}
+
+.view-selector button:hover {
+  background: var(--munich-gray);
+}
+
+.view-selector button.active {
+  background: var(--munich-mustard);
+  color: var(--munich-navy);
+  border-color: var(--munich-mustard);
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.usa-map {
+  width: 100%;
+  height: 100%;
+}
+
+.city-popup {
+  text-align: left;
+}
+
+.city-popup strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: var(--munich-navy);
+}
+
+.city-popup div {
+  font-size: 12px;
+  margin: 4px 0;
+  color: var(--munich-text);
+}
+

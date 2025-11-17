@@ -1,0 +1,166 @@
+{
+    "claimId": "FNOL-CP-201-4567-AJ",
+    "status": "Processing Complete – Claim Rejected (Non-Covered Peril: Flood)",
+    "logs": [
+      {
+        "stepNumber": 1,
+        "stageName": "FNOL Ingestion",
+        "agent": "IntakeOrchestrator",
+        "messageType": "success",
+        "message": "FNOL received via Broker Portal. Metadata extracted: submitter=Alice Johnson, timestamp=2025-06-30T08:11:04Z, policy=CP-201-4567.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 2,
+        "stageName": "Metadata Extraction",
+        "agent": "MetadataExtractor",
+        "messageType": "success",
+        "message": "Loss description and structured fields parsed successfully. Detected peril: flood.",
+        "confidenceScore": 0.97
+      },
+      {
+        "stepNumber": 3,
+        "stageName": "Document Classification",
+        "agent": "DocumentClassifier",
+        "messageType": "info",
+        "message": "FNOL includes no photos, invoices, or external reports. No supplemental documentation submitted yet."
+      },
+      {
+        "stepNumber": 4,
+        "stageName": "Address Normalization",
+        "agent": "GeoNormalizer",
+        "messageType": "success",
+        "message": "Address normalized and geocoded: 200 Biscayne Blvd, Miami, FL 33131.",
+        "confidenceScore": 0.95
+      },
+      {
+        "stepNumber": 5,
+        "stageName": "Deduplication Check",
+        "agent": "DuplicateDetector",
+        "messageType": "success",
+        "message": "No existing claims with matching date or location found.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 6,
+        "stageName": "Policy Retrieval",
+        "agent": "PolicyEngine",
+        "messageType": "success",
+        "message": "Policy CP-201-4567 retrieved. Active status confirmed. Deductible=$10,000. Endorsements loaded.",
+        "confidenceScore": 0.98
+      },
+      {
+        "stepNumber": 7,
+        "stageName": "Coverage Matching",
+        "agent": "CoverageAI",
+        "messageType": "error",
+        "message": "Detected peril: Flood. Standard property policy does not include flood coverage. Exclusion clause FP-EXC-04 triggered.",
+        "flags": ["nonCoveredPeril", "exclusion: flood"],
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 8,
+        "stageName": "Premium Check",
+        "agent": "BillingValidator",
+        "messageType": "success",
+        "message": "Premiums fully paid and current. No lapse detected.",
+        "confidenceScore": 0.99
+      },
+      {
+        "stepNumber": 9,
+        "stageName": "Coverage Integrity Score",
+        "agent": "CoverageScoringAgent",
+        "messageType": "warning",
+        "message": "Coverage integrity score: 43%. Low due to flood exclusion.",
+        "confidenceScore": 0.43
+      },
+      {
+        "stepNumber": 10,
+        "stageName": "Severity Scoring",
+        "agent": "SeverityModel",
+        "messageType": "info",
+        "message": "Estimated loss severity categorized as: Moderate Loss ($25K–$250K).",
+        "confidenceScore": 0.85
+      },
+      {
+        "stepNumber": 11,
+        "stageName": "Fraud/Anomaly Check",
+        "agent": "FraudDetector",
+        "messageType": "success",
+        "message": "No fraud indicators detected. Weather feed confirms heavy rainfall consistent with reported loss.",
+        "confidenceScore": 0.94
+      },
+      {
+        "stepNumber": 12,
+        "stageName": "Inspection Recommendation",
+        "agent": "InspectionRecommender",
+        "messageType": "info",
+        "message": "Inspection not required. Claim likely to be rejected due to non-covered peril.",
+        "confidenceScore": 0.88
+      },
+      {
+        "stepNumber": 13,
+        "stageName": "Evidence Collection",
+        "agent": "EvidenceCollector",
+        "messageType": "info",
+        "message": "Additional documentation request paused due to coverage conflict."
+      },
+      {
+        "stepNumber": 14,
+        "stageName": "Revalidation",
+        "agent": "RevalidationAgent",
+        "messageType": "info",
+        "message": "Revalidation confirms flood-related loss. Exclusion remains in effect."
+      },
+      {
+        "stepNumber": 15,
+        "stageName": "Property Damage Estimation",
+        "agent": "DamageEstimator",
+        "messageType": "info",
+        "message": "Damage estimator run suppressed. Non-covered peril flagged; estimation not required.",
+        "flags": ["coverageConflict"]
+      },
+      {
+        "stepNumber": 16,
+        "stageName": "Reserve Estimation",
+        "agent": "ReserveModel",
+        "messageType": "info",
+        "message": "Reserve not calculated due to non-covered peril.",
+        "flags": ["skipReserve"]
+      },
+      {
+        "stepNumber": 17,
+        "stageName": "Managerial Escalation & Approval",
+        "agent": "ApprovalRouter",
+        "messageType": "info",
+        "message": "Escalation not required. System auto-handled due to exclusion clause.",
+        "escalationRequired": false
+      },
+      {
+        "stepNumber": 18,
+        "stageName": "Coverage Determination",
+        "agent": "CoverageAI",
+        "messageType": "error",
+        "message": "Final coverage decision: Claim NOT COVERED due to explicit flood exclusion FP-EXC-04.",
+        "flags": ["coverageDenied"],
+        "confidenceScore": 0.98
+      },
+      {
+        "stepNumber": 19,
+        "stageName": "Payment Preparation",
+        "agent": "SettlementEngine",
+        "messageType": "info",
+        "message": "Payment processing skipped. No settlement applicable for excluded peril.",
+        "flags": ["noPayment"]
+      },
+      {
+        "stepNumber": 20,
+        "stageName": "Final Outcome",
+        "agent": "ClaimOrchestrator",
+        "messageType": "error",
+        "message": "Claim FNOL-CP-201-4567-AJ REJECTED. Reason: Flood damage is not covered under the insured's policy. Insured notified with denial letter.",
+        "confidenceScore": 0.99
+      }
+    ]
+  }
+  

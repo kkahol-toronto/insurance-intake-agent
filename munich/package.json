@@ -1,0 +1,43 @@
+{
+  "name": "munich-re-fnol-portal",
+  "version": "1.0.0",
+  "description": "FNOL Processing Portal for Munich Re",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3031",
+    "build": "vite build",
+    "preview": "vite preview --port 3031",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "classnames": "^2.5.1",
+    "d3-selection": "3.0.0",
+    "d3-zoom": "3.0.0",
+    "framer-motion": "^12.23.24",
+    "i18next": "^23.7.16",
+    "leaflet": "^1.9.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^13.5.0",
+    "react-leaflet": "^4.2.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^6.20.1",
+    "react-simple-maps": "^3.0.0",
+    "reactflow": "^11.11.4",
+    "recharts": "^2.10.3",
+    "remark-gfm": "^4.0.1",
+    "typescript": "^5.9.3",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.26",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "vite": "^5.0.8"
+  }
+}

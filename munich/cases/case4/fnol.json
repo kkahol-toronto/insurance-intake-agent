@@ -1,0 +1,70 @@
+{
+    "reportedBy": {
+      "roleInRelationToLoss": "MGA",
+      "title": "Mr.",
+      "firstName": "Robert",
+      "lastName": "Miller",
+      "phone": "415-555-2233",
+      "email": "robert.miller@westinsureMGA.com",
+      "address": {
+        "addressLine1": "100 Van Ness Avenue",
+        "addressLine2": "Floor 20",
+        "city": "San Francisco",
+        "stateProvince": "CA",
+        "country": "United States",
+        "zipPostalCode": "94102"
+      }
+    },
+    "policyInformation": {
+      "sameAsReportedBy": false,
+      "policyNumber": "CP-401-2345",
+      "insuredName": "Tech Solutions Corp.",
+      "contactFirstName": "Daniel",
+      "contactLastName": "Chen",
+      "phone": "415-555-9988",
+      "email": "daniel.chen@techsolutions.com",
+      "address": {
+        "addressLine1": "500 Market Street",
+        "addressLine2": "Suite 1000",
+        "city": "San Francisco",
+        "stateProvince": "CA",
+        "country": "United States",
+        "zipPostalCode": "94105"
+      }
+    },
+    "claimants": [
+      {
+        "source": "enterNew",
+        "title": "Mr.",
+        "firstName": "Daniel",
+        "lastName": "Chen",
+        "phone": "415-555-9988",
+        "email": "daniel.chen@techsolutions.com",
+        "address": {
+          "addressLine1": "500 Market Street",
+          "addressLine2": "Suite 1000",
+          "city": "San Francisco",
+          "stateProvince": "CA",
+          "country": "United States",
+          "zipPostalCode": "94105"
+        }
+      }
+    ],
+    "lossInformation": {
+      "dateOfLoss": "2025-07-22",
+      "lossDescription": "A pipe burst on the second floor of the Los Angeles branch office, causing extensive water damage to the server room and adjacent offices.",
+      "lawsuit": false,
+      "lossLocation": {
+        "source": "enterNew",
+        "addressLine1": "2500 Sunset Blvd",
+        "addressLine2": "",
+        "city": "Los Angeles",
+        "stateProvince": "CA",
+        "country": "United States",
+        "zipPostalCode": "90026"
+      },
+      "witnesses": false,
+      "authoritiesNotified": false
+    }
+  }
+  

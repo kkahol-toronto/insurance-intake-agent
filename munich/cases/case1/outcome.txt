@@ -1,0 +1,5 @@
+Scenario: The insured (policyholder) reports a fire at their commercial property. In this case, Joe Miller is the owner of “Joe’s Hardware Inc.” and he files the claim himself. All provided information is correct and the loss (fire) is a covered peril under the policy. The FNOL is processed successfully and the claim is accepted for normal handling.
+•	Reporter Role: Insured (the policyholder is filing their own claim). Joe’s contact information is reused for the insured contact ("sameAsReportedBy": true).
+•	Loss Cause: Fire broke out in the building (a covered peril under the property policy).
+•	Authorities Notified: Yes, the fire department responded to the incident.
+•	Outcome: The claim is accepted and opened for processing since coverage is confirmed for fire damage.

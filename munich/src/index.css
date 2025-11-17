@@ -1,0 +1,46 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Munich Re Color Scheme: Navy Blue, White, Mustard */
+  --munich-navy: #003366;
+  --munich-navy-dark: #001f3f;
+  --munich-navy-light: #004080;
+  --munich-white: #ffffff;
+  --munich-mustard: #FFB347;
+  --munich-mustard-dark: #E6A03D;
+  --munich-mustard-light: #FFC966;
+  --munich-gray: #f5f5f5;
+  --munich-gray-dark: #e0e0e0;
+  --munich-text: #333333;
+  --munich-text-light: #666666;
+
+  color-scheme: light;
+  color: var(--munich-text);
+  background-color: var(--munich-navy);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--munich-navy);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+

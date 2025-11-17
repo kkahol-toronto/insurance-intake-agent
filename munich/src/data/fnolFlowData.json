@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {"id": "start", "label": "Start", "status": "idle", "durationMs": 500},
+    {"id": "fnolIngestion", "label": "FNOL Ingestion", "status": "idle", "durationMs": 1200, "notes": ["IntakeOrchestrator", "Receive FNOL via Portal"]},
+    {"id": "metadataExtraction", "label": "Metadata Extraction", "status": "idle", "durationMs": 1000, "notes": ["MetadataExtractor", "Parse structured fields"]},
+    {"id": "documentClassification", "label": "Document Classification", "status": "idle", "durationMs": 1000, "notes": ["DocumentClassifier", "Identify document types"]},
+    {"id": "addressNormalization", "label": "Address Normalization", "status": "idle", "durationMs": 800, "notes": ["GeoNormalizer", "Geocode addresses"]},
+    {"id": "deduplicationCheck", "label": "Deduplication Check", "status": "idle", "durationMs": 800, "notes": ["DuplicateDetector", "Check for existing claims"]},
+    {"id": "policyRetrieval", "label": "Policy Retrieval", "status": "idle", "durationMs": 1000, "notes": ["PolicyEngine", "Retrieve policy details"]},
+    {"id": "coverageMatching", "label": "Coverage Matching", "status": "idle", "durationMs": 1000, "notes": ["CoverageAI", "Match loss to covered perils"]},
+    {"id": "premiumCheck", "label": "Premium Check", "status": "idle", "durationMs": 800, "notes": ["BillingValidator", "Verify premium status"]},
+    {"id": "coverageIntegrityScore", "label": "Coverage Integrity Score", "status": "idle", "durationMs": 1000, "notes": ["CoverageScoringAgent", "Calculate integrity score"]},
+    {"id": "severityScoring", "label": "Severity Scoring", "status": "idle", "durationMs": 1000, "notes": ["SeverityModel", "Estimate loss severity"]},
+    {"id": "fraudAnomalyCheck", "label": "Fraud/Anomaly Check", "status": "idle", "durationMs": 1200, "notes": ["FraudDetector", "Detect fraud indicators"]},
+    {"id": "inspectionDecisioning", "label": "Inspection Decisioning", "status": "idle", "durationMs": 1000, "notes": ["InspectionRecommender", "Recommend inspection type"]},
+    {"id": "evidenceCollection", "label": "Evidence Collection", "status": "idle", "durationMs": 1000, "notes": ["EvidenceCollector", "Request additional evidence"]},
+    {"id": "revalidation", "label": "Revalidation", "status": "idle", "durationMs": 1000, "notes": ["RevalidationAgent", "Validate consistency"]},
+    {"id": "propertyDamageEstimation", "label": "Property Damage Estimation", "status": "idle", "durationMs": 1200, "notes": ["DamageEstimator", "Estimate property damage"]},
+    {"id": "reserveEstimation", "label": "Reserve Estimation", "status": "idle", "durationMs": 1000, "notes": ["ReserveModel", "Set initial reserve"]},
+    {"id": "managerialEscalation", "label": "Managerial Escalation & Approval", "status": "idle", "durationMs": 1200, "notes": ["ApprovalRouter", "Route for approval"]},
+    {"id": "coverageDetermination", "label": "Coverage Determination", "status": "idle", "durationMs": 1000, "notes": ["CoverageAI", "Final coverage decision"]},
+    {"id": "paymentPreparation", "label": "Payment Preparation", "status": "idle", "durationMs": 1000, "notes": ["SettlementEngine", "Prepare settlement options"]},
+    {"id": "finalOutcome", "label": "Final Outcome", "status": "idle", "durationMs": 800, "notes": ["ClaimOrchestrator", "Complete processing"]}
+  ],
+  "edges": [
+    {"id": "e1", "source": "start", "target": "fnolIngestion"},
+    {"id": "e2", "source": "fnolIngestion", "target": "metadataExtraction"},
+    {"id": "e3", "source": "metadataExtraction", "target": "documentClassification"},
+    {"id": "e4", "source": "documentClassification", "target": "addressNormalization"},
+    {"id": "e5", "source": "addressNormalization", "target": "deduplicationCheck"},
+    {"id": "e6", "source": "deduplicationCheck", "target": "policyRetrieval"},
+    {"id": "e7", "source": "policyRetrieval", "target": "coverageMatching"},
+    {"id": "e8", "source": "coverageMatching", "target": "premiumCheck"},
+    {"id": "e9", "source": "premiumCheck", "target": "coverageIntegrityScore"},
+    {"id": "e10", "source": "coverageIntegrityScore", "target": "severityScoring"},
+    {"id": "e11", "source": "severityScoring", "target": "fraudAnomalyCheck"},
+    {"id": "e12", "source": "fraudAnomalyCheck", "target": "inspectionDecisioning"},
+    {"id": "e13", "source": "inspectionDecisioning", "target": "evidenceCollection"},
+    {"id": "e14", "source": "evidenceCollection", "target": "revalidation"},
+    {"id": "e15", "source": "revalidation", "target": "propertyDamageEstimation"},
+    {"id": "e16", "source": "propertyDamageEstimation", "target": "reserveEstimation"},
+    {"id": "e17", "source": "reserveEstimation", "target": "managerialEscalation"},
+    {"id": "e18", "source": "managerialEscalation", "target": "coverageDetermination"},
+    {"id": "e19", "source": "coverageDetermination", "target": "paymentPreparation"},
+    {"id": "e20", "source": "paymentPreparation", "target": "finalOutcome"}
+  ]
+}
+

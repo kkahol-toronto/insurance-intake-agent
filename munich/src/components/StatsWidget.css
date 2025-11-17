@@ -1,0 +1,57 @@
+/* Munich Re Stats Widget Styles */
+.stats-widget {
+  background: var(--munich-white);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--munich-mustard);
+}
+
+.stats-widget-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.stats-icon {
+  font-size: 24px;
+}
+
+.stats-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--munich-text-light);
+  margin: 0;
+}
+
+.stats-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--munich-navy);
+}
+
+.stats-widget-accepted {
+  border-left-color: #28a745;
+}
+
+.stats-widget-rejected {
+  border-left-color: #dc3545;
+}
+
+.stats-widget-pending {
+  border-left-color: var(--munich-mustard);
+}
+
+.stats-widget-accepted .stats-value {
+  color: #28a745;
+}
+
+.stats-widget-rejected .stats-value {
+  color: #dc3545;
+}
+
+.stats-widget-pending .stats-value {
+  color: var(--munich-mustard);
+}
+

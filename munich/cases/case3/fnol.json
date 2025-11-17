@@ -1,0 +1,70 @@
+{
+    "reportedBy": {
+      "roleInRelationToLoss": "Broker",
+      "title": "Ms.",
+      "firstName": "Susan",
+      "lastName": "Lee",
+      "phone": "206-555-9876",
+      "email": "susan.lee@brightbrokers.com",
+      "address": {
+        "addressLine1": "300 Pine Street",
+        "addressLine2": "Suite 500",
+        "city": "Seattle",
+        "stateProvince": "WA",
+        "country": "United States",
+        "zipPostalCode": "98101"
+      }
+    },
+    "policyInformation": {
+      "sameAsReportedBy": false,
+      "policyNumber": "CP-301-7890",
+      "insuredName": "Green Fields Apartments LLC",
+      "contactFirstName": "Mark",
+      "contactLastName": "Thompson",
+      "phone": "206-555-6543",
+      "email": "mark.thompson@greenfields.com",
+      "address": {
+        "addressLine1": "9800 Greenwood Ave",
+        "addressLine2": "",
+        "city": "Seattle",
+        "stateProvince": "WA",
+        "country": "United States",
+        "zipPostalCode": "98103"
+      }
+    },
+    "claimants": [
+      {
+        "source": "enterNew",
+        "title": "Mr.",
+        "firstName": "Mark",
+        "lastName": "Thompson",
+        "phone": "206-555-6543",
+        "email": "mark.thompson@greenfields.com",
+        "address": {
+          "addressLine1": "9800 Greenwood Ave",
+          "addressLine2": "",
+          "city": "Seattle",
+          "stateProvince": "WA",
+          "country": "United States",
+          "zipPostalCode": "98103"
+        }
+      }
+    ],
+    "lossInformation": {
+      "dateOfLoss": "2025-10-05",
+      "lossDescription": "Over the weekend, several units were broken into and appliances were stolen. There were signs of forced entry and vandalism throughout the property.",
+      "lawsuit": false,
+      "lossLocation": {
+        "source": "enterNew",
+        "addressLine1": "9800 Greenwood Ave",
+        "addressLine2": "",
+        "city": "Seattle",
+        "stateProvince": "WA",
+        "country": "United States",
+        "zipPostalCode": "98103"
+      },
+      "witnesses": true,
+      "authoritiesNotified": true
+    }
+  }
+  

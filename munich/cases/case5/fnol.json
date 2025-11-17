@@ -1,0 +1,70 @@
+{
+    "reportedBy": {
+      "roleInRelationToLoss": "Other",
+      "title": "Mr.",
+      "firstName": "Henry",
+      "lastName": "Adams",
+      "phone": "214-555-6677",
+      "email": "henry.adams@toppropertymgmt.com",
+      "address": {
+        "addressLine1": "789 Elm Street",
+        "addressLine2": "",
+        "city": "Dallas",
+        "stateProvince": "TX",
+        "country": "United States",
+        "zipPostalCode": "75202"
+      }
+    },
+    "policyInformation": {
+      "sameAsReportedBy": false,
+      "policyNumber": "CP-999-9999",
+      "insuredName": "Lakeside Inn",
+      "contactFirstName": "Linda",
+      "contactLastName": "Garcia",
+      "phone": "214-555-1122",
+      "email": "linda.garcia@lakesideinn.com",
+      "address": {
+        "addressLine1": "654 Lakeview Drive",
+        "addressLine2": "",
+        "city": "Dallas",
+        "stateProvince": "TX",
+        "country": "United States",
+        "zipPostalCode": "75210"
+      }
+    },
+    "claimants": [
+      {
+        "source": "enterNew",
+        "title": "Ms.",
+        "firstName": "Linda",
+        "lastName": "Garcia",
+        "phone": "214-555-1122",
+        "email": "linda.garcia@lakesideinn.com",
+        "address": {
+          "addressLine1": "654 Lakeview Drive",
+          "addressLine2": "",
+          "city": "Dallas",
+          "stateProvince": "TX",
+          "country": "United States",
+          "zipPostalCode": "75210"
+        }
+      }
+    ],
+    "lossInformation": {
+      "dateOfLoss": "2025-11-10",
+      "lossDescription": "An electrical fire started in the kitchen, causing minor fire and smoke damage before it was extinguished.",
+      "lawsuit": false,
+      "lossLocation": {
+        "source": "enterNew",
+        "addressLine1": "654 Lakeview Drive",
+        "addressLine2": "",
+        "city": "Dallas",
+        "stateProvince": "TX",
+        "country": "United States",
+        "zipPostalCode": "75210"
+      },
+      "witnesses": false,
+      "authoritiesNotified": true
+    }
+  }
+  
