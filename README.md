@@ -1,4 +1,4 @@
-# SunLife Insurance Intake Portal
+# Munich Re FNOL Processing Portal
 
 A comprehensive digital intake portal for SunLife Insurance claims processing, built with React and featuring bilingual support (English/French), interactive dashboards, and geographical visualization.
 
@@ -295,8 +295,139 @@ The agent visualizes the claims process from Start through CHESS:
 
 ## License
 
-This project is proprietary software for SunLife Insurance.
+This repository contains the **Munich Re First Notice of Loss (FNOL) portal** – a React/Vite experience that helps Munich Re teams triage FNOL submissions, monitor KPIs across the US, drive a 20-stage FNOL simulator, and collaborate with an Azure OpenAI copilot.  
+All customer-facing code lives in the `munich/` directory; the legacy SunLife implementation (`src/`) is kept only for historical reference.
 
-## Contributors
+---
 
-- Development Team
+## Highlights
+
+| Area | Details |
+|------|---------|
+| **Branding** | Munich Re navy / white / mustard palette, responsive layout, EN/DE toggle. |
+| **Dashboard** | KPI cards, Leaflet USA map, FNOL table with CHESS augmentation tags. |
+| **FNOL Simulator** | React Flow DAG (20 stages), lock/auto layout, play/pause/step/reset, event log, stage messages, debug flow toggle. |
+| **Chat Copilot** | Floating widget posts to FastAPI with `client: "munich"`; renders markdown tables and remembers last 10 exchanges. |
+| **Sample Data** | Five FNOL scenarios (each ships with `fnol.json`, `status.json`, `outcome.txt`) plus Munich collateral PDFs. |
+| **Backend** | FastAPI services (chat + PDF ingestion) already multi-tenant. |
+
+---
+
+## Repository Layout
+
+```
+.
+├── backend/                   # FastAPI (multi-tenant chat + PDF ingestion)
+├── munich/                    # Munich Re FNOL SPA
+│   ├── assets/                # Logos, PDFs
+│   ├── cases/                 # case{1..5}/{fnol,status,outcome}
+│   ├── src/
+│   │   ├── components/        # Dashboard widgets, chat, simulator
+│   │   ├── pages/             # Login, Dashboard
+│   │   ├── store/             # Zustand simulator store
+│   │   ├── utils/             # Auth helper, FNOL data loader, layout utils
+│   │   └── locales/           # en/de translations
+│   └── vite.config.js
+└── README.md
+```
+
+> Deploy the `munich/` directory as a standalone SPA. The backend folder is optional if you only need the UI.
+
+---
+
+## Dashboard Walkthrough (munich/src/pages/Dashboard.jsx)
+
+### Authentication
+- `/login` prompts for credentials (`admin / fnol2025`) and stores the token in `localStorage`.
+- `ProtectedRoute` enforces authentication for `/dashboard`.
+
+### KPI Grid
+- Stats are computed from the mock FNOL cases (`generateFNOLStatistics`) – total, accepted, rejected, pending.
+
+### USA FNOL Map
+- `react-leaflet` canvas with mustard markers for Dallas, Austin, LA, SF, Seattle, NY, Miami. Tooltips include counts and severity hints.
+
+### FNOL Table
+- Searchable, sortable, CHESS augmentation label, action button to open the simulator modal.
+
+### Chat Widget
+- Munich-themed floating button.
+- Sends requests to `/api/chat` with `client: "munich"` so the FastAPI service loads Munich-specific prompts, KPIs, event logs, and documents.
+
+---
+
+## FNOL Processing Simulator
+
+| Feature | Description |
+|---------|-------------|
+| Flow | 20 deterministic stages defined in `src/data/fnolFlowData.json`. |
+| State | Zustand store tracks node status, active edge, simulation state, event log, and stage messages. |
+| Controls | Play / Pause / Step / Reset / Speed slider (0.25×–3×) plus Auto Layout and Lock Layout toggles. |
+| Side Panel | Shows current & next stage, elapsed time, case metadata, and event log (with “View Extracted Info” links). |
+| Messages | Each FNOL case includes stage-by-stage copy loaded from `status.json`; CHESS cases (Robin Noah, Bandy Morris, etc.) display bespoke messaging. |
+| Debug Flow | Header button toggles to a minimal two-node canvas to confirm edges render within the modal container. |
+
+The simulator also persists event logs (JSON) under `backend/data/event_logs/` so the chat copilot can answer questions about prior runs.
+
+---
+
+## Backend (FastAPI)
+
+Located in `backend/`. Main endpoints:
+
+1. `POST /api/chat` – Azure OpenAI chat with tenant-aware prompts (`client` field).  
+2. `POST /api/pdf_ingestion_agent` – Optional PDF → OCR → Azure OpenAI JSON extraction.  
+3. Event log persistence (gitignored) for later analytics or chat context.
+
+Quick setup:
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env   # fill AZURE_OPENAI_*, MISTRAL_* keys
+uvicorn main:app --reload --host 0.0.0.0 --port 8004
+```
+
+---
+
+## Frontend Setup (`munich/`)
+
+```bash
+cd munich
+npm install
+npm run dev        # http://localhost:3031
+```
+
+Build for production:
+```bash
+npm run build      # creates munich/dist
+```
+
+Deploy `munich/dist` to Azure Static Web Apps, Storage Static Website, Vercel, Netlify, etc.
+
+---
+
+## Data & Assets
+- **Cases** live in `munich/cases/case{1..5}/` with:
+  - `fnol.json`: raw FNOL payload
+  - `status.json`: simulator stage messages + durations
+  - `outcome.txt`: narrative summary
+- **Branding** assets (logo + marketing PDF) live in `munich/assets/`.
+- **Layout** logic for the simulator is centralized in `munich/src/utils/layoutUtils.js` (columns of four nodes).
+
+---
+
+## Roadmap Ideas
+
+- Wire KPI widgets/map/table to live FNOL feeds or Azure Functions.
+- Persist per-case node positions in localStorage.
+- Embed PDF + extracted JSON viewer directly in the simulator.
+- Expand chat to support retrieval over attachments and event logs.
+- Add role-based auth / assignments.
+
+---
+
+## License
+
+Internal prototype © Munich Re. Not licensed for public distribution.
