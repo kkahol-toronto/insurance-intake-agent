@@ -56,6 +56,7 @@ class ChatRequest(BaseModel):
     document_id: Optional[int] = None
     claims_data: Optional[Dict[str, Any]] = None
     event_log: Optional[List[Dict[str, Any]]] = None  # Simulator event log
+    client: Optional[str] = "sunlife"  # "sunlife" or "munich"
 
 class EventLogRequest(BaseModel):
     claim_number: str
@@ -106,7 +107,8 @@ async def chat(request: ChatRequest):
             context_type=request.context_type,
             document_id=request.document_id,
             claims_data=request.claims_data,
-            event_log=request.event_log
+            event_log=request.event_log,
+            client=request.client or "sunlife"
         )
         
         return ChatResponse(

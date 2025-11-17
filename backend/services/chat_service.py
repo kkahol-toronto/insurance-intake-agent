@@ -31,7 +31,8 @@ class ChatService:
     def chat(self, user_message: str, chat_history: List[Dict[str, str]] = None, 
              context_type: str = "dashboard", document_id: Optional[int] = None,
              claims_data: Optional[Dict[str, Any]] = None,
-             event_log: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+             event_log: Optional[List[Dict[str, Any]]] = None,
+             client: str = "sunlife") -> Dict[str, Any]:
         """
         Chat with dashboard data or documents
         
@@ -48,11 +49,11 @@ class ChatService:
         try:
             # Prepare the system prompt based on context type
             if context_type == "dashboard":
-                system_prompt = self._create_dashboard_prompt(claims_data, event_log)
+                system_prompt = self._create_dashboard_prompt(claims_data, event_log, client)
             elif context_type == "document":
-                system_prompt = self._create_document_prompt(document_id)
+                system_prompt = self._create_document_prompt(document_id, client)
             else:
-                system_prompt = self._create_general_prompt()
+                system_prompt = self._create_general_prompt(client)
             
             # Prepare messages for OpenAI
             messages = [{"role": "system", "content": system_prompt}]
@@ -94,11 +95,41 @@ class ChatService:
             }
     
     def _create_dashboard_prompt(self, claims_data: Optional[Dict[str, Any]] = None, 
-                                  event_log: Optional[List[Dict[str, Any]]] = None) -> str:
+                                  event_log: Optional[List[Dict[str, Any]]] = None,
+                                  client: str = "sunlife") -> str:
         """
         Create a system prompt for dashboard chat
         """
-        base_prompt = """You are an intelligent assistant for SunLife Insurance Claims Processing Dashboard. 
+        if client == "munich":
+            base_prompt = """You are an intelligent assistant for Munich Re FNOL (First Notice of Loss) Processing Portal. 
+You help users understand and analyze FNOL cases, statistics, and processing information.
+
+You can help with:
+1. Explaining FNOL case statistics (total, accepted, rejected, pending)
+2. Analyzing geographical distribution of FNOL cases across USA
+3. Understanding case details and patterns
+4. Answering questions about FNOL processing stages (20-stage workflow)
+5. Providing insights about case trends and outcomes
+6. Helping with data interpretation and analysis
+7. Explaining the 20-stage FNOL processing workflow
+
+Instructions:
+1. Be helpful and accurate in your responses
+2. Use the provided FNOL case data when available
+3. Provide specific numbers and statistics when relevant
+4. Keep responses concise but informative
+5. If asked about something not in the data, say so clearly
+6. Format responses with markdown for better readability
+7. Use emojis sparingly to enhance readability (✅ accepted, ❌ rejected, ⏳ pending)
+8. When presenting data in tables or lists, ALWAYS use proper markdown table format:
+   - Use markdown tables (| column | column |) for tabular data
+   - Use markdown lists (- or 1.) for sequential data
+   - Use bold (**text**) for emphasis on numbers or key points
+   - Ensure tables are properly formatted with headers and alignment
+
+Please help the user understand and analyze their FNOL case data."""
+        else:
+            base_prompt = """You are an intelligent assistant for SunLife Insurance Claims Processing Dashboard. 
 You help users understand and analyze insurance claims data, statistics, and processing information.
 
 You can help with:
@@ -131,15 +162,23 @@ Please help the user understand and analyze their insurance claims data."""
         event_log = event_log if isinstance(event_log, list) else None
 
         if claims_data:
-            # Add claims data context
-            claims_summary = self._format_claims_data_summary(claims_data)
-            prompt_parts.append(f"\nCurrent Claims Data Summary:\n{claims_summary}")
+            # Add claims/FNOL data context
+            if client == "munich":
+                claims_summary = self._format_fnol_data_summary(claims_data)
+                prompt_parts.append(f"\nCurrent FNOL Case Data Summary:\n{claims_summary}")
+            else:
+                claims_summary = self._format_claims_data_summary(claims_data)
+                prompt_parts.append(f"\nCurrent Claims Data Summary:\n{claims_summary}")
         
         if event_log:
             # Add event log context
-            event_log_summary = self._format_event_log_summary(event_log)
-            prompt_parts.append(f"\nClaims Process Agent Activity Log:\n{event_log_summary}")
-            prompt_parts.append("\nUse the activity log to answer questions about the claims process agent stages, actions taken, extracted information, branching decisions, and outcomes.")
+            event_log_summary = self._format_event_log_summary(event_log, client)
+            if client == "munich":
+                prompt_parts.append(f"\nFNOL Processing Activity Log:\n{event_log_summary}")
+                prompt_parts.append("\nUse the activity log to answer questions about the 20-stage FNOL processing workflow, stages completed, actions taken, extracted information, and outcomes.")
+            else:
+                prompt_parts.append(f"\nClaims Process Agent Activity Log:\n{event_log_summary}")
+                prompt_parts.append("\nUse the activity log to answer questions about the claims process agent stages, actions taken, extracted information, branching decisions, and outcomes.")
         
         if claims_data or event_log:
             prompt_parts.append("\nUse this data to provide accurate and relevant responses.")
@@ -200,7 +239,55 @@ Please help the user understand and analyze their insurance claims data."""
         
         return "\n".join(summary_parts)
     
-    def _format_event_log_summary(self, event_log: List[Dict[str, Any]]) -> str:
+    def _format_fnol_data_summary(self, claims_data: Dict[str, Any]) -> str:
+        """
+        Format FNOL case data for the prompt (Munich Re)
+        """
+        if not isinstance(claims_data, dict):
+            return "No FNOL case statistics available."
+
+        summary_parts = []
+        
+        # Statistics
+        if "statistics" in claims_data and isinstance(claims_data.get("statistics"), dict):
+            stats = claims_data["statistics"]
+            summary_parts.append("Statistics:")
+            summary_parts.append(f"  - Total Cases: {stats.get('total', 0)}")
+            summary_parts.append(f"  - Accepted Cases: {stats.get('accepted', 0)}")
+            summary_parts.append(f"  - Rejected Cases: {stats.get('rejected', 0)}")
+            summary_parts.append(f"  - Pending Cases: {stats.get('pending', 0)}")
+        
+        # City data
+        if "cityData" in claims_data and isinstance(claims_data.get("cityData"), list):
+            city_data = claims_data["cityData"]
+            if city_data:
+                summary_parts.append("\nCity-wise Distribution:")
+                for city in city_data[:10]:  # Limit to top 10 cities
+                    city_name = city.get("city", "Unknown")
+                    state = city.get("state", "Unknown")
+                    total = city.get("total", 0)
+                    accepted = city.get("accepted", 0)
+                    rejected = city.get("rejected", 0)
+                    pending = city.get("pending", 0)
+                    summary_parts.append(f"  - {city_name}, {state}: Total={total}, Accepted={accepted}, Rejected={rejected}, Pending={pending}")
+        
+        # Recent cases
+        if "recentCases" in claims_data and isinstance(claims_data.get("recentCases"), list):
+            recent = claims_data["recentCases"]
+            if recent:
+                summary_parts.append("\nRecent FNOL Cases (sample):")
+                for case in recent[:5]:  # Limit to 5 recent cases
+                    claim_id = case.get("claimId", "Unknown")
+                    insured = case.get("insuredName", "Unknown")
+                    status = case.get("status", "Unknown")
+                    city = case.get("city", "Unknown")
+                    state = case.get("state", "Unknown")
+                    date_of_loss = case.get("dateOfLoss", "Unknown")
+                    summary_parts.append(f"  - {claim_id}: {insured} ({status}) - {city}, {state} - Loss Date: {date_of_loss}")
+        
+        return "\n".join(summary_parts)
+    
+    def _format_event_log_summary(self, event_log: List[Dict[str, Any]], client: str = "sunlife") -> str:
         """
         Format event log for the prompt
         """
@@ -248,11 +335,32 @@ Please help the user understand and analyze their insurance claims data."""
         
         return "\n".join(summary_parts)
     
-    def _create_document_prompt(self, document_id: Optional[int] = None) -> str:
+    def _create_document_prompt(self, document_id: Optional[int] = None, client: str = "sunlife") -> str:
         """
         Create a system prompt for document chat
         """
-        return """You are an intelligent document assistant for SunLife Insurance. 
+        if client == "munich":
+            return """You are an intelligent document assistant for Munich Re. 
+You help users understand and analyze FNOL (First Notice of Loss) documents, claim forms, and related paperwork.
+
+You can help with:
+1. Extracting information from FNOL documents
+2. Understanding document content
+3. Answering questions about document details
+4. Identifying key information in forms
+5. Explaining document structure and purpose
+
+Instructions:
+1. Be helpful and accurate in your responses
+2. Use the provided document content when available
+3. Provide specific quotes or references when possible
+4. Keep responses concise but informative
+5. If asked about something not in the document, say so clearly
+6. Format responses with markdown for better readability
+
+Please help the user understand and analyze their FNOL documents."""
+        else:
+            return """You are an intelligent document assistant for SunLife Insurance. 
 You help users understand and analyze insurance claim documents, forms, and related paperwork.
 
 You can help with:
@@ -272,11 +380,23 @@ Instructions:
 
 Please help the user understand and analyze their insurance documents."""
     
-    def _create_general_prompt(self) -> str:
+    def _create_general_prompt(self, client: str = "sunlife") -> str:
         """
         Create a general system prompt
         """
-        return """You are an intelligent assistant for SunLife Insurance Claims Processing Portal. 
+        if client == "munich":
+            return """You are an intelligent assistant for Munich Re FNOL Processing Portal. 
+You help users with questions about FNOL cases, processing, and general inquiries.
+
+Instructions:
+1. Be helpful and accurate in your responses
+2. Keep responses concise but informative
+3. Format responses with markdown for better readability
+4. If you don't know something, say so clearly
+
+Please help the user with their questions."""
+        else:
+            return """You are an intelligent assistant for SunLife Insurance Claims Processing Portal. 
 You help users with questions about insurance claims, processing, and general inquiries.
 
 Instructions:
