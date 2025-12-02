@@ -128,6 +128,34 @@ Instructions:
    - Ensure tables are properly formatted with headers and alignment
 
 Please help the user understand and analyze their FNOL case data."""
+        elif client == "nips":
+            base_prompt = """You are an intelligent assistant for Celanese Neural Invoicing Processing System (NIPS). 
+You help users understand and analyze invoice processing, ATP (Available-to-Promise) status, logistics, and pricing information.
+
+You can help with:
+1. Explaining invoice statistics (processed, approved, pending, ATP alerts)
+2. Analyzing ATP status and promise dates
+3. Understanding vendor and customer relationships
+4. Answering questions about logistics holds and shipping delays
+5. Providing insights about pricing reviews and formula updates
+6. Helping with data interpretation and analysis
+7. Explaining ATP processing stages and agentic pipeline
+
+Instructions:
+1. Be helpful and accurate in your responses
+2. Use the provided invoice and case data when available
+3. Provide specific numbers and statistics when relevant
+4. Keep responses concise but informative
+5. If asked about something not in the data, say so clearly
+6. Format responses with markdown for better readability
+7. Use emojis sparingly to enhance readability (✅ ready, ⏳ pending, ⚠️ at risk)
+8. When presenting data in tables or lists, ALWAYS use proper markdown table format:
+   - Use markdown tables (| column | column |) for tabular data
+   - Use markdown lists (- or 1.) for sequential data
+   - Use bold (**text**) for emphasis on numbers or key points
+   - Ensure tables are properly formatted with headers and alignment
+
+Please help the user understand and analyze their invoice processing data."""
         else:
             base_prompt = """You are an intelligent assistant for SunLife Insurance Claims Processing Dashboard. 
 You help users understand and analyze insurance claims data, statistics, and processing information.
@@ -162,10 +190,13 @@ Please help the user understand and analyze their insurance claims data."""
         event_log = event_log if isinstance(event_log, list) else None
 
         if claims_data:
-            # Add claims/FNOL data context
+            # Add claims/FNOL/invoice data context
             if client == "munich":
                 claims_summary = self._format_fnol_data_summary(claims_data)
                 prompt_parts.append(f"\nCurrent FNOL Case Data Summary:\n{claims_summary}")
+            elif client == "nips":
+                claims_summary = self._format_nips_data_summary(claims_data)
+                prompt_parts.append(f"\nCurrent Invoice & ATP Data Summary:\n{claims_summary}")
             else:
                 claims_summary = self._format_claims_data_summary(claims_data)
                 prompt_parts.append(f"\nCurrent Claims Data Summary:\n{claims_summary}")
@@ -284,6 +315,50 @@ Please help the user understand and analyze their insurance claims data."""
                     state = case.get("state", "Unknown")
                     date_of_loss = case.get("dateOfLoss", "Unknown")
                     summary_parts.append(f"  - {claim_id}: {insured} ({status}) - {city}, {state} - Loss Date: {date_of_loss}")
+        
+        return "\n".join(summary_parts)
+    
+    def _format_nips_data_summary(self, claims_data: Dict[str, Any]) -> str:
+        """
+        Format NIPS invoice/ATP data for the prompt
+        """
+        if not isinstance(claims_data, dict):
+            return "No invoice statistics available."
+
+        summary_parts = []
+        
+        # Statistics
+        if "statistics" in claims_data and isinstance(claims_data.get("statistics"), dict):
+            stats = claims_data["statistics"]
+            summary_parts.append("Statistics:")
+            summary_parts.append(f"  - Total Invoices: {stats.get('totalInvoices', 0)}")
+            summary_parts.append(f"  - Approved: {stats.get('approved', 0)}")
+            summary_parts.append(f"  - Pending: {stats.get('pending', 0)}")
+            summary_parts.append(f"  - ATP Alerts: {stats.get('atpAlerts', 0)}")
+        
+        # Current case
+        if "currentCase" in claims_data and claims_data.get("currentCase"):
+            case = claims_data["currentCase"]
+            summary_parts.append("\nCurrent Case:")
+            summary_parts.append(f"  - Case ID: {case.get('id', 'Unknown')}")
+            summary_parts.append(f"  - Vendor: {case.get('vendor', 'Unknown')}")
+            summary_parts.append(f"  - Customer: {case.get('customer', 'Unknown')}")
+            summary_parts.append(f"  - Type: {case.get('type', 'Unknown')}")
+            summary_parts.append(f"  - Status: {case.get('status', 'Unknown')}")
+            summary_parts.append(f"  - ATP Notes: {case.get('atpNotes', 'No notes')}")
+            summary_parts.append(f"  - Amount: ${case.get('amount', 0):,.2f}" if case.get('amount') else "")
+        
+        # Recent cases
+        if "recentCases" in claims_data and isinstance(claims_data.get("recentCases"), list):
+            recent = claims_data["recentCases"]
+            if recent:
+                summary_parts.append("\nRecent Cases (sample):")
+                for case in recent[:5]:
+                    case_id = case.get("id", "Unknown")
+                    vendor = case.get("vendor", "Unknown")
+                    status = case.get("status", "Unknown")
+                    case_type = case.get("type", "Unknown")
+                    summary_parts.append(f"  - {case_id}: {vendor} ({case_type}) - {status}")
         
         return "\n".join(summary_parts)
     

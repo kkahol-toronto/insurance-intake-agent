@@ -28,8 +28,14 @@ app.add_middleware(
         "http://localhost:3030", 
         "http://localhost:3031", 
         "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5176",
+        "http://localhost:5177",
+        "http://localhost:5178",
         "http://localhost:8004",  # Backend port
-        "https://sunlifeintakewebstore.z9.web.core.windows.net"
+        "https://sunlifeintakewebstore.z9.web.core.windows.net",
+        "https://purple-dune-011c6230f.3.azurestaticapps.net",
     ],
     allow_credentials=True,
     allow_methods=["*"],
