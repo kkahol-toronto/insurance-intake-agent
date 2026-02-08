@@ -42,6 +42,12 @@
   border-color: #ECAB23;
 }
 
+.benefit-type {
+  font-size: 0.9em;
+  color: #666;
+  font-weight: normal;
+}
+
 .search-input {
   padding: 8px 12px;
   border: 1px solid #ECAB23;

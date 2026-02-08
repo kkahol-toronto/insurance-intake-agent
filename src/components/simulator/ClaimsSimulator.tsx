@@ -28,6 +28,9 @@ import GapAssessmentMessages from './GapAssessmentMessages';
 import CodeConversionMessages from './CodeConversionMessages';
 import ClaimDataEntryMessages from './ClaimDataEntryMessages';
 import ChessStageMessages, { chessStageIds } from './ChessStageMessages';
+
+// Backend API endpoint
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '') || 'https://insurance-intake-agent.azurewebsites.net';
 import ExtractionViewer from './ExtractionViewer';
 import ChatWidget from '../ChatWidget';
 import { applyLayout } from '../../utils/layoutUtils';
@@ -121,7 +124,7 @@ function ClaimsSimulatorInner({ claim }: ClaimsSimulatorProps) {
     // Debounce saves - only save when event log has new entries
     const saveEventLog = async () => {
       try {
-        const response = await fetch('http://localhost:8004/api/event-log', {
+        const response = await fetch(`${API_BASE_URL}/api/event-log`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm'
 import './ChatWidget.css'
 
 // Backend API endpoint
-const API_BASE_URL = 'http://localhost:8004'
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '') || 'https://insurance-intake-agent.azurewebsites.net'
 
 function ChatWidget({ claims = [], statistics = null, cityData = [], eventLog = null }) {
   const { t } = useTranslation()
@@ -29,7 +29,7 @@ function ChatWidget({ claims = [], statistics = null, cityData = [], eventLog = 
     const loadEventLog = async () => {
       try {
         // Try to load event log for the demo claim
-        const response = await fetch('http://localhost:8004/api/event-log/SLF%20DEN%209997310')
+        const response = await fetch(`${API_BASE_URL}/api/event-log/SLF%20DEN%209997310`)
         if (response.ok) {
           const data = await response.json()
           if (data.success && data.data) {

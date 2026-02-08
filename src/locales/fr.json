@@ -75,6 +75,13 @@
     "downloadGraph": "Télécharger le graphique en PNG",
     "heatmapLegend": "Légende de la Carte Thermique",
     "heatmapExplanation": "Les couleurs des provinces indiquent la densité des réclamations. La taille du cercle représente le total des réclamations. Survolez les villes pour voir les détails.",
+    "claimType": "Type",
+    "claimTypeAll": "Tous les types",
+    "claimTypeDental": "Dentaire",
+    "claimTypeDisability": "Invalidité",
+    "benefitTypeSTD": "CTR",
+    "benefitTypeLTD": "LTI",
+    "diagnosis": "Diagnostic",
     "integrationLabels": {
       "Pega": "Augmentation Pega",
       "CHESS": "Augmentation CHESS",

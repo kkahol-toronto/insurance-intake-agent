@@ -91,6 +91,7 @@ function ClaimsTable({ claims }) {
   const [sortField, setSortField] = useState('submittedDate')
   const [sortDirection, setSortDirection] = useState('desc')
   const [filterStatus, setFilterStatus] = useState('all')
+  const [filterClaimType, setFilterClaimType] = useState('all')
   const [language, setLanguage] = useState(i18n.language)
   const [selectedClaim, setSelectedClaim] = useState(null)
   const [selectedExtractionClaim, setSelectedExtractionClaim] = useState(null)
@@ -123,17 +124,21 @@ function ClaimsTable({ claims }) {
     let filtered = claims.filter(claim => {
       const integrationKey = claim.integrationType || 'Pega'
       const integrationLabel = t(`dashboard.integrationLabels.${integrationKey}`, integrationKey).toLowerCase()
+      const claimType = claim.claimType || 'dental'
       const matchesSearch = 
         claim.claimNumber.toLowerCase().includes(search) ||
         claim.patientName.toLowerCase().includes(search) ||
         claim.memberId.toLowerCase().includes(search) ||
         claim.city.toLowerCase().includes(search) ||
+        (claim.diagnosis && claim.diagnosis.toLowerCase().includes(search)) ||
+        (claim.benefitType && claim.benefitType.toLowerCase().includes(search)) ||
         integrationKey.toLowerCase().includes(search) ||
         integrationLabel.includes(search)
       
       const matchesStatus = filterStatus === 'all' || claim.status === filterStatus
+      const matchesClaimType = filterClaimType === 'all' || claimType === filterClaimType
       
-      return matchesSearch && matchesStatus
+      return matchesSearch && matchesStatus && matchesClaimType
     })
 
     filtered.sort((a, b) => {
@@ -161,7 +166,7 @@ function ClaimsTable({ claims }) {
     })
 
     return filtered
-  }, [claims, searchTerm, sortField, sortDirection, filterStatus, language])
+  }, [claims, searchTerm, sortField, sortDirection, filterStatus, filterClaimType, language])
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -202,6 +207,16 @@ function ClaimsTable({ claims }) {
         <h2>{t('dashboard.claimsList')}</h2>
         <div className="table-controls">
           <select
+            value={filterClaimType}
+            onChange={(e) => setFilterClaimType(e.target.value)}
+            className="status-filter"
+            aria-label={t('dashboard.claimType')}
+          >
+            <option value="all">{t('dashboard.claimTypeAll')}</option>
+            <option value="dental">{t('dashboard.claimTypeDental')}</option>
+            <option value="disability">{t('dashboard.claimTypeDisability')}</option>
+          </select>
+          <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
             className="status-filter"
@@ -228,6 +243,10 @@ function ClaimsTable({ claims }) {
               <th onClick={() => handleSort('claimNumber')}>
                 {t('dashboard.claimNumber')}
                 {sortField === 'claimNumber' && (sortDirection === 'asc' ? ' ↑' : ' ↓')}
+              </th>
+              <th onClick={() => handleSort('claimType')}>
+                {t('dashboard.claimType')}
+                {sortField === 'claimType' && (sortDirection === 'asc' ? ' ↑' : ' ↓')}
               </th>
               <th onClick={() => handleSort('patientName')}>
                 {t('dashboard.patientName')}
@@ -265,7 +284,7 @@ function ClaimsTable({ claims }) {
           <tbody>
             {filteredAndSortedClaims.length === 0 ? (
               <tr>
-                <td colSpan="8" className="no-results">
+                <td colSpan="10" className="no-results">
                   {t('dashboard.noResults')}
                 </td>
               </tr>
@@ -304,6 +323,18 @@ function ClaimsTable({ claims }) {
                     className="claim-row-clickable"
                   >
                     <td>{claim.claimNumber}</td>
+                    <td>
+                      {claim.claimType === 'disability' ? (
+                        <span title={claim.diagnosis}>
+                          {t('dashboard.claimTypeDisability')}
+                          {claim.benefitType && (
+                            <span className="benefit-type"> ({claim.benefitType})</span>
+                          )}
+                        </span>
+                      ) : (
+                        t('dashboard.claimTypeDental')
+                      )}
+                    </td>
                     <td>{claim.patientName}</td>
                     <td>{claim.memberId}</td>
                     <td>{claim.city}</td>

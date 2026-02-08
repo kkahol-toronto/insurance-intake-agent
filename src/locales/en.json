@@ -75,6 +75,13 @@
     "downloadGraph": "Download graph as PNG",
     "heatmapLegend": "Heatmap Legend",
     "heatmapExplanation": "Province colors indicate claim density. Circle size represents total claims. Hover over cities for detailed breakdown.",
+    "claimType": "Type",
+    "claimTypeAll": "All Types",
+    "claimTypeDental": "Dental",
+    "claimTypeDisability": "Disability",
+    "benefitTypeSTD": "STD",
+    "benefitTypeLTD": "LTD",
+    "diagnosis": "Diagnosis",
     "integrationLabels": {
       "Pega": "Pega Augmentation",
       "CHESS": "CHESS Augmentation",
